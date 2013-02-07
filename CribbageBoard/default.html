@@ -8,6 +8,15 @@
 
     <title>CribbageBoard</title>
 
+    <!-- WinJS references -->
+    <link href="//Microsoft.WinJS.1.0/css/ui-dark.css" rel="stylesheet" />
+    <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
+    <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>
+
+    <!-- HelloWorld references -->
+    <link href="/css/default.css" rel="stylesheet" />
+    <script src="/js/default.js"></script>
+
 	<style>
     
         body {
@@ -19,7 +28,8 @@
 		.drag { position: relative; }
     
     </style>
-    <script src="kinetic-v4.3.1.min.js"> </script>
+
+    <script src="/js/kinetic-v4.3.1.min.js"> </script>
     <script>
 		var _startX = 0;            // mouse starting positions
 		var _startY = 0;
@@ -409,8 +419,11 @@
 </head>
 
 <body onLoad="showDots();">
+    <div data-win-control="WinJS.UI.ViewBox">
+        <div class="fixedlayout">
     <div id="container"></div>
-    
+    </div>
+        </div>
 
 </body>
 
