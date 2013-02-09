@@ -26,7 +26,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\default.html">
       <PackagePath>default.html</PackagePath>
-      <Modified>2013-02-07T01:53:32.011</Modified>
+      <Modified>2013-02-08T01:24:06.478</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\circle.png">
       <PackagePath>images\circle.png</PackagePath>
