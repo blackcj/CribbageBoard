@@ -16,53 +16,57 @@
     <AppXManifest Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\bin\Debug\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2013-02-07T01:50:11.922</Modified>
+      <Modified>2013-02-09T17:57:35.723</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\css\default.css">
       <PackagePath>css\default.css</PackagePath>
-      <Modified>2013-02-07T01:44:48.602</Modified>
+      <Modified>2013-02-09T17:40:09.665</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\default.html">
       <PackagePath>default.html</PackagePath>
-      <Modified>2013-02-08T01:24:06.478</Modified>
+      <Modified>2013-02-09T21:48:51.864</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\circle.png">
       <PackagePath>images\circle.png</PackagePath>
-      <Modified>2013-02-07T01:43:10.626</Modified>
+      <Modified>2013-02-09T17:40:09.673</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\logo.png">
       <PackagePath>images\logo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2012-07-26T17:30:08.000</Modified>
+      <Modified>2013-02-09T17:40:09.674</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\smalllogo.png">
       <PackagePath>images\smalllogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2012-07-26T17:30:08.000</Modified>
+      <Modified>2013-02-09T17:40:09.675</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\splashscreen.png">
       <PackagePath>images\splashscreen.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2012-07-26T17:30:08.000</Modified>
+      <Modified>2013-02-09T17:40:09.677</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\storelogo.png">
       <PackagePath>images\storelogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2012-07-26T17:30:08.000</Modified>
+      <Modified>2013-02-09T17:40:09.678</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\js\default.js">
       <PackagePath>js\default.js</PackagePath>
-      <Modified>2012-07-04T22:06:04.000</Modified>
+      <Modified>2013-02-09T17:40:09.680</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\js\kinetic-v4.3.1.min.js">
       <PackagePath>js\kinetic-v4.3.1.min.js</PackagePath>
-      <Modified>2013-02-07T01:43:10.669</Modified>
+      <Modified>2013-02-09T17:40:09.701</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\js\utils.js">
+      <PackagePath>js\utils.js</PackagePath>
+      <Modified>2013-02-09T21:37:54.982</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\bin\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2013-02-07T01:50:11.834</Modified>
+      <Modified>2013-02-09T17:57:35.540</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

@@ -62,6 +62,7 @@
     </AppxManifest>
     <Content Include="js\default.js" />
     <Content Include="js\kinetic-v4.3.1.min.js" />
+    <Content Include="js\utils.js" />
     <None Include="CribbageBoard_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

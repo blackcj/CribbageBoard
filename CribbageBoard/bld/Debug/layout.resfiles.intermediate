@@ -7,3 +7,4 @@ images\splashscreen.png
 images\storelogo.png
 js\default.js
 js\kinetic-v4.3.1.min.js
+js\utils.js

@@ -16,35 +16,37 @@
     <!-- HelloWorld references -->
     <link href="/css/default.css" rel="stylesheet" />
     <script src="/js/default.js"></script>
+    <script src="/js/utils.js"></script>
 
 	<style>
     
-        body {
+        html, body {
         
-            background:#000;
+            background:#004A00;
+            height: 100%;
+            margin: 0;
+            padding: 0;
         
         }
-		
-		.drag { position: relative; }
+
+	    body {
+            -ms-flex-align: center;
+            -ms-flex-direction: column;
+            -ms-flex-pack: center;
+            display: -ms-flexbox;
+	    }
     
     </style>
 
     <script src="/js/kinetic-v4.3.1.min.js"> </script>
     <script>
-		var _startX = 0;            // mouse starting positions
-		var _startY = 0;
-		var _offsetX = 0;           // current element offset
-		var _offsetY = 0;
-		var _dragElement;           // needs to be passed from OnMouseDown to OnMouseMove
-		var _oldZIndex = 0;         // we temporarily increase the z-index during drag
-		var _debug = $('debug');    // makes life easier
-		
+        // 1024x768 minimum resolution!
+        // 
+
+        var backgroundColor = '#1a1a1a';
 		var rowOne = new Array();
     	var rowTwo = new Array();
     	var rowThree = new Array();
-		
-		var sourceY = 600;
-		var sourceX = 1428;
 		
 		var _width = 1024;
 		var _height = 768;
@@ -57,103 +59,285 @@
 		var selectedColor = "";
 		var pegIndexes = [0,1,0,1,0,1];
 		
-		var xPos = 124;
-		var yPos = 153;
-		
-		var rowOne = new Array();
-		var rowTwo = new Array();
-		var rowThree = new Array();
-		
 		var suites = ["h","s","c","d"];
 		var numbers = ["1","2","3","4","5","6","7","8","9","10","j","q","k"];
 		var deck = new Array();
-		var pegRedOne;
-		
-		initDragDrop();
-		buildArrays();
-
-		function initDragDrop()
-		{
-			//document.onmousedown = OnMouseDown;
-			//document.onmouseup = OnMouseUp;
-		}
-		
-		function Point(x, y){
-			this.x = x || 0;
-			this.y = y || 0;
-		};
 		
 		var stage;
+
+		buildArrays();
+
+		var pegIndexes = [0,1,0,1,0,1];
 		
-		function showDots()
-		{
-			stage = new Kinetic.Stage({
-				container: 'container',
-				width: 1024,
-				height: 768
-			});
+		var pegBlueOne;
+		var pegBlueTwo;
+		var pegYellowOne;
+		var pegYellowTwo;
+		var pegRedOne;
+		var pegRedTwo;
 
-      		var layer = new Kinetic.Layer();
-			
-			for(var p = 2; p < rowOne.length; p++)
-			{
-				var rect = new Kinetic.Rect({
-					x: rowOne[p].x,
-					y: rowOne[p].y,
-					width: 10,
-					height: 10,
-					fill: 'red',
-				});
+		var pegLayer = new Kinetic.Layer();
+		var messageLayer = new Kinetic.Layer();
+		var lineLayer = new Kinetic.Layer();
+        
+		var pegOneColor = '#2572EB';
+		var pegTwoColor = '#F3B200';
+		var pegThreeColor = '#AD103C';
 
-				// add the shape to the layer
-				//layer.add(rect);
-			}
-			
-			for(var q = 2; q < rowTwo.length; q++)
-			{
-				var rect = new Kinetic.Rect({
-					x: rowTwo[q].x,
-					y: rowTwo[q].y,
-					width: 10,
-					height: 10,
-					fill: 'green',
-				});
+		function drawPegs() {
+		    pegBlueOne = drawPeg(pegOneColor, 'pegBlueOne');
+		    pegLayer.add(pegBlueOne);
 
-				// add the shape to the layer
-				//layer.add(rect);
-			}
-			
-			for(var w = 2; w < rowThree.length; w++)
-			{
-				var rect = new Kinetic.Rect({
-					x: rowThree[w].x,
-					y: rowThree[w].y,
-					width: 10,
-					height: 10,
-					fill: 'blue',
-				});
+		    pegBlueTwo = drawPeg(pegOneColor, 'pegBlueTwo');
+		    pegLayer.add(pegBlueTwo);
 
-				// add the shape to the layer
-				//layer.add(rect);
-			}	
-			// add the layer to the stage
-      		stage.add(layer);
-			var imageObj = new Image();
-			imageObj.onload = function() {
-				drawImage(this);
-			};
-			imageObj.src = 'images/circle.png';
+		    pegYellowOne = drawPeg(pegTwoColor, 'pegYellowOne');
+		    pegLayer.add(pegYellowOne);
 
-			var imageObj2 = new Image();
-			imageObj2.onload = function () {
-			    drawImage(this);
-			};
-			imageObj2.src = 'images/circle.png';
+		    pegYellowTwo = drawPeg(pegTwoColor, 'pegYellowTwo');
+		    pegLayer.add(pegYellowTwo);
+
+		    pegRedOne = drawPeg(pegThreeColor, 'pegRedOne');
+		    pegLayer.add(pegRedOne);
+
+		    pegRedTwo = drawPeg(pegThreeColor, 'pegRedTwo');
+		    pegLayer.add(pegRedTwo);
+
+		    pegBlueOne.setX(rowOne[pegIndexes[0]].x);
+		    pegBlueOne.setY(rowOne[pegIndexes[0]].y);
+		    pegBlueTwo.setX(rowOne[pegIndexes[1]].x);
+		    pegBlueTwo.setY(rowOne[pegIndexes[1]].y);
+
+		    pegYellowOne.setX(rowTwo[pegIndexes[2]].x);
+		    pegYellowOne.setY(rowTwo[pegIndexes[2]].y);
+		    pegYellowTwo.setX(rowTwo[pegIndexes[3]].x);
+		    pegYellowTwo.setY(rowTwo[pegIndexes[3]].y);
+
+		    pegRedOne.setX(rowThree[pegIndexes[4]].x);
+		    pegRedOne.setY(rowThree[pegIndexes[4]].y);
+		    pegRedTwo.setX(rowThree[pegIndexes[5]].x);
+		    pegRedTwo.setY(rowThree[pegIndexes[5]].y);
+
 
 		}
-		var dot1;
-		var dot2;
+		var redLine = new Kinetic.Line({
+		    points: [0, 0, 0, 0],
+		    stroke: pegThreeColor,
+		    strokeWidth: 5,
+		    lineCap: 'round',
+		    lineJoin: 'round'
+		});
+
+		var yellowLine = new Kinetic.Line({
+		    points: [0, 0, 0, 0],
+		    stroke: pegTwoColor,
+		    strokeWidth: 5,
+		    lineCap: 'round',
+		    lineJoin: 'round'
+		});
+
+		var blueLine = new Kinetic.Line({
+		    points: [0, 0, 0, 0],
+		    stroke: pegOneColor,
+		    strokeWidth: 5,
+		    lineCap: 'round',
+		    lineJoin: 'round'
+		});
+
+		function getPegIndex(peg, row)
+		{
+		    var index = 0;
+		    var closest = 500;
+		    var pegPoint = new Point(peg.getX(), peg.getY());
+		    for(var p = 0; p < row.length; p++)
+		    {
+                var dist = getDistanceGivenPoints(pegPoint, row[p]);
+        
+                if(dist < closest){
+                    closest = dist;
+                    index = p;
+                    if(dist < 4){
+                        continue;
+		            }
+		        }
+		    }
+		    return index;
+		}
+
+		function drawPeg(color, name) {
+		    var circle = new Kinetic.Circle({
+		        x: stage.getWidth() / 2,
+		        y: stage.getHeight() / 2,
+		        radius: 16,
+		        fill: color,
+                name: name,
+                draggable: true
+		    });
+		    console.log(name);
+		    circle.on('dragmove', function (pos) {
+		        var points = new Array();
+		        if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
+		            if (pos.shape.attrs.name == 'pegRedOne') {
+		                tempIndex = getPegIndex(pegRedOne, rowThree);
+		                points.push(rowThree[pegIndexes[5]].x);
+		                points.push(rowThree[pegIndexes[5]].y);
+		                //updateGuide(_page.pegBlueOne, 1, tempIndex, 0x7FCA9D);
+		                for (g = pegIndexes[5]; g <= tempIndex; g++) {
+		                    points.push(rowThree[g].x);
+		                    points.push(rowThree[g].y);
+		                }
+
+		            } else {
+		                tempIndex = getPegIndex(pegRedTwo, rowThree);
+		                points.push(rowThree[pegIndexes[4]].x);
+		                points.push(rowThree[pegIndexes[4]].y);
+		                //updateGuide(_page.pegBlueTwo, 0, tempIndex, 0x7FCA9D);
+		                for (g = pegIndexes[4]; g <= tempIndex; g++) {
+		                    points.push(rowThree[g].x);
+		                    points.push(rowThree[g].y);
+		                }
+
+		            }
+		            redLine.setPoints(points);
+		        } else if (pos.shape.attrs.name == 'pegBlueOne' || pos.shape.attrs.name == 'pegBlueTwo') {
+
+		            if (pos.shape.attrs.name == 'pegBlueOne') {
+		                tempIndex = getPegIndex(pegBlueOne, rowOne);
+		                points.push(rowOne[pegIndexes[1]].x);
+		                points.push(rowOne[pegIndexes[1]].y);
+		                //updateGuide(_page.pegBlueOne, 1, tempIndex, 0x7FCA9D);
+		                for (g = pegIndexes[1]; g <= tempIndex; g++) {
+		                    points.push(rowOne[g].x);
+		                    points.push(rowOne[g].y);
+		                }
+
+		            } else {
+		                tempIndex = getPegIndex(pegBlueTwo, rowOne);
+		                points.push(rowOne[pegIndexes[0]].x);
+		                points.push(rowOne[pegIndexes[0]].y);
+		                //updateGuide(_page.pegBlueTwo, 0, tempIndex, 0x7FCA9D);
+		                for (g = pegIndexes[0]; g <= tempIndex; g++) {
+		                    points.push(rowOne[g].x);
+		                    points.push(rowOne[g].y);
+		                }
+
+		            }
+		            blueLine.setPoints(points);
+		        } else if (pos.shape.attrs.name == 'pegYellowOne' || pos.shape.attrs.name == 'pegYellowTwo') {
+
+		            if (pos.shape.attrs.name == 'pegYellowOne') {
+		                tempIndex = getPegIndex(pegYellowOne, rowTwo);
+		                points.push(rowOne[pegIndexes[3]].x);
+		                points.push(rowOne[pegIndexes[3]].y);
+		                //updateGuide(_page.pegBlueOne, 1, tempIndex, 0x7FCA9D);
+		                for (g = pegIndexes[3]; g <= tempIndex; g++) {
+		                    points.push(rowTwo[g].x);
+		                    points.push(rowTwo[g].y);
+		                }
+
+		            } else {
+		                tempIndex = getPegIndex(pegYellowTwo, rowOne);
+		                points.push(rowTwo[pegIndexes[2]].x);
+		                points.push(rowTwo[pegIndexes[2]].y);
+		                //updateGuide(_page.pegBlueTwo, 0, tempIndex, 0x7FCA9D);
+		                for (g = pegIndexes[2]; g <= tempIndex; g++) {
+		                    points.push(rowTwo[g].x);
+		                    points.push(rowTwo[g].y);
+		                }
+
+		            }
+		            yellowLine.setPoints(points);
+		        }
+		        lineLayer.draw();
+		    });
+
+		    circle.on('dragstart', function (pos) {
+		        drawing = true;
+		        if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
+		            redLine.show();
+		        } else if (pos.shape.attrs.name == 'pegBlueOne' || pos.shape.attrs.name == 'pegBlueTwo') {
+		            blueLine.show();
+		        } else if (pos.shape.attrs.name == 'pegYellowOne' || pos.shape.attrs.name == 'pegYellowTwo') {
+		            yellowLine.show();
+		        }
+		        startX = pos.x;
+		        startY = pos.y;
+		        writeMessage(messageLayer, pos.shape.attrs.name + ' down ' + pos.x + ',' + pos.y);
+		    });
+
+		    circle.on('dragend', function (pos) {
+		        if (pos.shape.attrs.name == 'pegRedOne') {
+		            redLine.hide();
+		            pegIndexes[4] = placePeg(pos.shape, rowThree);
+		        } else if (pos.shape.attrs.name == 'pegRedTwo') {
+		            redLine.hide();
+		            pegIndexes[5] = placePeg(pos.shape, rowThree);
+		        } else if (pos.shape.attrs.name == 'pegBlueOne') {
+		            blueLine.hide();
+		            pegIndexes[0] = placePeg(pos.shape, rowOne);
+		        } else if (pos.shape.attrs.name == 'pegBlueTwo') {
+		            blueLine.hide();
+		            pegIndexes[1] = placePeg(pos.shape, rowOne);
+		        } else if (pos.shape.attrs.name == 'pegYellowOne') {
+		            yellowLine.hide();
+		            pegIndexes[2] = placePeg(pos.shape, rowTwo);
+		        } else if (pos.shape.attrs.name == 'pegYellowTwo') {
+		            yellowLine.hide();
+		            pegIndexes[3] = placePeg(pos.shape, rowTwo);
+		        }
+		        lineLayer.draw();
+		        pegLayer.draw();
+		        //writeMessage(messageLayer, pos.shape.attrs.name + ' up ' + pos.x + ',' + pos.y);
+		    });
+		    return circle;
+		}
+
+		window.onresize = function(event) {
+		    init();
+		}
+
+		function init() {
+		    var scale = window.innerHeight / 768;
+		    stage = new Kinetic.Stage({
+		        container: 'container',
+		        width: 1024 * scale,
+		        height: window.innerHeight,
+		        scale: scale
+		    });
+		    var backgroundLayer = new Kinetic.Layer();
+		    var rect = new Kinetic.Rect({
+		        x: 0,
+		        y: 40,
+		        width: 1024 * scale,
+		        height: 768 - 100,
+		        fill: backgroundColor
+		    });
+
+		    backgroundLayer.add(rect);
+
+		    stage.add(backgroundLayer);
+
+		    showDots();
+		    drawPegs();
+		    lineLayer.add(redLine);
+		    lineLayer.add(blueLine);
+		    lineLayer.add(yellowLine);
+		    stage.add(lineLayer);
+		    stage.add(pegLayer);
+		    stage.add(messageLayer);
+            
+		}
+		function writeMessage(messageLayer, message) {
+		    var context = messageLayer.getContext();
+		    messageLayer.clear();
+		    context.font = '18pt Calibri';
+		    context.fillStyle = 'black';
+		    context.fillText(message, 10, 25);
+		}
 		
+		writeMessage(messageLayer, 'hello world');
+
+		/*
 		function drawImage(imageObj) { 
 			var layer = new Kinetic.Layer();
 			// darth vader
@@ -166,151 +350,19 @@
 			  draggable: true
 			});
 
-			
-			
 			layer.add(dot1);
 
 
 			stage.add(layer);
 		}
-
-		function drawImage2(imageObj) {
-		    var layer = new Kinetic.Layer();
-		    // darth vader
-		    dot2 = new Kinetic.Image({
-		        image: imageObj,
-		        x: 200,
-		        y: 200,
-		        width: 40,
-		        height: 40,
-		        draggable: true
-		    });
-
-		    dot2.on("dragmove", function () {
-		        var layer2 = new Kinetic.Layer();
-		        var redLine = new Kinetic.Line({
-		            points: [dot1.x, dot1.y, dot2.x, dot2.y],
-		            stroke: 'red',
-		            strokeWidth: 15,
-		            lineCap: 'round',
-		            lineJoin: 'round'
-		        });
-		        layer2.add(redLine);
-		        stage.add(layer2);
-		    });
-
-		    layer.add(dot2);
-
-
-		    stage.add(layer);
-		}
 		
-		function buildArrays()
-		{
-		  
-		  rowOne.push(new Point(59, 153));
-		  rowOne.push(new Point(76,153));
-		  
-		  
-		  rowTwo.push(new Point(59, 199));
-		  rowTwo.push(new Point(76,199));
-		  
-		  
-		  rowThree.push(new Point(59, 248));
-		  rowThree.push(new Point(76,248));
-		  
-		  
-		  for(var i = 1; i <= 35; i++)
-		  {
-			rowOne.push(new Point(xPos, yPos));
-			rowTwo.push(new Point(xPos, yPos + 46));
-			rowThree.push(new Point(xPos, yPos + 46 + 49));
-			xPos += 16.45;
-			if(i%5 == 0){
-			  xPos += 24;
-			}
-			
-		  }
-		  
-		  rowOne.push(new Point(886, 158.5));
-		  rowOne.push(new Point(942,208.5));
-		  rowOne.push(new Point(965.5, 284));
-		  rowOne.push(new Point(948.5,359));
-		  rowOne.push(new Point(896.5, 417.5));
-		  
-		  rowTwo.push(new Point(868.5, 209));
-		  rowTwo.push(new Point(905, 240.5));
-		  rowTwo.push(new Point(916.5, 284.5));
-		  rowTwo.push(new Point(907, 327.5));
-		  rowTwo.push(new Point(879, 366));
-		  
-		  rowThree.push(new Point(854, 257));
-		  rowThree.push(new Point(866, 270));
-		  rowThree.push(new Point(869.5, 287));
-		  rowThree.push(new Point(867.5, 305));
-		  rowThree.push(new Point(860, 319.5));
-		  
-		  
-		  xPos -= 35;
-		  yPos = 429;
-		  
-		  for(var n = 1; n <= 35; n++)
-		  {
-			rowOne.push(new Point(xPos, yPos));
-			rowTwo.push(new Point(xPos, yPos - 46));
-			rowThree.push(new Point(xPos, yPos - 46 - 47));
-			xPos -= 16.8;
-			if(n%5 == 0){
-			  xPos -= 9.9;
-			}
-			
-		  }
-		  
-		  rowOne.push(new Point(169.5, 441.5));
-		  rowOne.push(new Point(159.5, 457.5));
-		  rowOne.push(new Point(155.5, 474));
-		  rowOne.push(new Point(158.5, 492));
-		  rowOne.push(new Point(170.5, 506.5));
-		  
-		  rowTwo.push(new Point(156.5, 384));
-		  rowTwo.push(new Point(121, 419));
-		  rowTwo.push(new Point(104, 471));
-		  rowTwo.push(new Point(117.5, 521.5));
-		  rowTwo.push(new Point(156.5, 555));
-		  
-		  rowThree.push(new Point(142.5, 338));
-		  rowThree.push(new Point(77.5, 393.5));
-		  rowThree.push(new Point(58.5, 469.5));
-		  rowThree.push(new Point(79, 548));
-		  rowThree.push(new Point(139, 605));
-		  
-		  xPos += 24;
-		  yPos = 517.5;
-		  
-		  for(var m = 1; m <= 40; m++)
-		  {
-			rowOne.push(new Point(xPos, yPos));
-			rowTwo.push(new Point(xPos, yPos + 46));
-			rowThree.push(new Point(xPos, yPos + 46 + 49));
-			xPos += 16.5;
-			if(m%5 == 0){
-			  xPos += 10.8;
-			}
-			
-		  }
-		  
-		  rowOne.push(new Point(970.5, 561.5));
-		  
-		  rowTwo.push(new Point(970.5, 561.5));
-		  
-		  rowThree.push(new Point(970.5, 561.5));
-		}
+		*/
 
 		function placePeg(peg, row)
 		{
 		  var blueIndex = 0;
 		  var closest = 500;
-		  var pegPoint = new Point(peg.x, peg.y);
+		  var pegPoint = new Point(peg.getX(), peg.getY());
 		  for(var p = 0; p < row.length; p++)
 		  {
 			var dist = getDistanceGivenPoints(pegPoint, row[p]);
@@ -321,31 +373,32 @@
 			}
 		  }
 		  switch(peg){
-			case _page.pegBlueOne:
+			case pegBlueOne:
 			  if(blueIndex == pegIndexes[1]){
 				blueIndex ++;
 			  }
 			  break;
-			case _page.pegBlueTwo:
+			case pegBlueTwo:
 			  if(blueIndex == pegIndexes[0]){
 				blueIndex ++;
 			  }
 			  break;
-			case _page.pegYellowOne:
-			  if(blueIndex == pegIndexes[3]){
-				blueIndex ++;
-			  }
-			case _page.pegYellowTwo:
-			  if(blueIndex == pegIndexes[2]){
-				blueIndex ++;
-			  }
-			  break;
-			case _page.pegRedOne:
+		    case pegYellowOne:
+		        if (blueIndex == pegIndexes[3]) {
+		            blueIndex++;
+		        }
+		    case pegYellowTwo:
+		        if (blueIndex == pegIndexes[2]) {
+		            blueIndex++;
+		        }
+		        break;
+
+			case pegRedOne:
 			  if(blueIndex == pegIndexes[5]){
 				blueIndex ++;
 			  }
 			  break;
-			case _page.pegRedTwo:
+			case pegRedTwo:
 			  if(blueIndex == pegIndexes[4]){
 				blueIndex ++;
 			  }
@@ -354,87 +407,11 @@
 		  if(blueIndex > row.length - 1){
 			blueIndex = 0;
 		  }
-		  peg.x = row[blueIndex].x;
-		  peg.y = row[blueIndex].y;
+		  peg.setX(row[blueIndex].x);
+		  peg.setY(row[blueIndex].y);
+		  //peg.draw();
+		  writeMessage(messageLayer, peg.attrs.name + ' placed at ' + row[blueIndex].x + ',' + row[blueIndex].y);
 		  return blueIndex;
-		}
-		
-		function OnMouseDown(e)
-		{
-			// IE is retarded and doesn't pass the event object
-			if (e == null) 
-				e = window.event; 
-			
-			// IE uses srcElement, others use target
-			var target = e.target != null ? e.target : e.srcElement;
-		
-			// for IE, left click == 1
-			// for Firefox, left click == 0
-			if ((e.button == 1 && window.event != null || 
-				e.button == 0) && 
-				target.className == 'drag')
-			{
-				// grab the mouse position
-				_startX = e.clientX;
-				_startY = e.clientY;
-				
-				
-				// grab the clicked element's position
-				_offsetX = ExtractNumber(target.style.left);
-				_offsetY = ExtractNumber(target.style.top);
-				
-				// bring the clicked element to the front while it is being dragged
-				_oldZIndex = target.style.zIndex;
-				target.style.zIndex = 10000;
-				
-				// we need to access the element in OnMouseMove
-				_dragElement = target;
-		
-				// tell our code to start moving the element with the mouse
-				document.onmousemove = OnMouseMove;
-				
-				// cancel out any text selections
-				document.body.focus();
-		
-				// prevent text selection in IE
-				document.onselectstart = function () { return false; };
-				// prevent IE from trying to drag an image
-				target.ondragstart = function() { return false; };
-				
-				// prevent text selection (except IE)
-				return false;
-			}
-		}
-		
-		function OnMouseMove(e)
-		{
-			if (e == null) 
-				var e = window.event; 
-			
-			var nextX = (_offsetX + e.clientX - _startX) ;
-			var nextY = (_offsetY + e.clientY - _startY) ;
-			
-			if(nextX % 10 == 0){
-				// this is the actual "drag code"
-				_dragElement.style.left = nextX + 'px';
-				_dragElement.style.top = nextY + 'px';
-			}
-		}
-		
-		function OnMouseUp(e)
-		{
-			if (_dragElement != null)
-			{
-				_dragElement.style.zIndex = _oldZIndex;
-		
-				// we're done with these events until the next OnMouseDown
-				document.onmousemove = null;
-				document.onselectstart = null;
-				_dragElement.ondragstart = null;
-		
-				// this is how we know we're not dragging      
-				_dragElement = null;
-			}
 		}
 		
 		function ExtractNumber(value)
@@ -450,16 +427,10 @@
 			return document.getElementById(id);
 		}
 	</script>
-
 </head>
 
-<body onLoad="showDots();">
-    <div data-win-control="WinJS.UI.ViewBox">
-        <div class="fixedlayout">
+<body onLoad="init();">
     <div id="container"></div>
-    </div>
-        </div>
-
 </body>
 
 </html>

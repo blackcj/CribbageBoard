@@ -44,6 +44,9 @@
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\js\kinetic-v4.3.1.min.js">
       <PackagePath>js\kinetic-v4.3.1.min.js</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\js\utils.js">
+      <PackagePath>js\utils.js</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\bin\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
     </AppxPackagedFile>
