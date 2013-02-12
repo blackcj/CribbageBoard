@@ -19,8 +19,20 @@
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\default.html">
       <PackagePath>default.html</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\background.png">
+      <PackagePath>images\background.png</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\circle.png">
       <PackagePath>images\circle.png</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\cribbage.png">
+      <PackagePath>images\cribbage.png</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\cribbage2.png">
+      <PackagePath>images\cribbage2.png</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\felt.png">
+      <PackagePath>images\felt.png</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Chris\Documents\GitHub\CribbageBoard\CribbageBoard\images\logo.png">
       <PackagePath>images\logo.png</PackagePath>

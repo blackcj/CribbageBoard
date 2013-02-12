@@ -389,3 +389,209 @@ function showDots() {
     stage.add(layer);
 }
 
+/**
+         * Create peg and add event listeners.
+         *
+         */
+function getPegIndex(peg, row) {
+    var index = 0;
+    var closest = 500;
+    var pegPoint = new Point(peg.getX(), peg.getY());
+    for (var p = 0; p < row.length; p++) {
+        var dist = getDistanceGivenPoints(pegPoint, row[p]);
+
+        if (dist < closest) {
+            closest = dist;
+            index = p;
+            if (dist < 4) {
+                continue;
+            }
+        }
+    }
+    return index;
+}
+
+/**
+ * The guide shows the number of pegs as a user drags. This function sets the color, position and text of the guide.
+ *
+ */
+function updateGuide(peg, i, tempIndex, color) {
+    if (tempIndex > pegIndexes[i]) {
+        if (pegIndexes[i] <= 0) {
+            writeMessage(messageLayer, tempIndex - pegIndexes[i] - 1, peg.getX(), peg.getY(), color);
+        } else {
+            writeMessage(messageLayer, tempIndex - pegIndexes[i], peg.getX(), peg.getY(), color);
+        }
+    } else {
+        writeMessage(messageLayer, "", 0, 0, color);
+    }
+}
+
+/**
+ * Create peg and add event listeners.
+ *
+ */
+function drawPeg(color, name) {
+    var circle = new Kinetic.Circle({
+        x: stage.getWidth() / 2,
+        y: stage.getHeight() / 2,
+        radius: 18,
+        fill: color,
+        name: name,
+        opacity: 0.4,
+        draggable: true
+    });
+
+    // pos is a reference to the event. pos.x and pos.y will return coordinates. pos.shape returns the peg targeted in the event.
+    circle.on('dragmove', function (pos) {
+        var points = new Array();
+        if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
+            if (pos.shape.attrs.name == 'pegRedOne') {
+                tempIndex = getPegIndex(pegRedOne, rowThree);
+                points.push(rowThree[pegIndexes[5]].x);
+                points.push(rowThree[pegIndexes[5]].y);
+                updateGuide(pegRedOne, 5, tempIndex, pegThreeColor);
+                for (g = pegIndexes[5]; g <= tempIndex; g++) {
+                    points.push(rowThree[g].x);
+                    points.push(rowThree[g].y);
+                }
+            } else {
+                tempIndex = getPegIndex(pegRedTwo, rowThree);
+                points.push(rowThree[pegIndexes[4]].x);
+                points.push(rowThree[pegIndexes[4]].y);
+                updateGuide(pegRedTwo, 4, tempIndex, pegThreeColor);
+                for (g = pegIndexes[4]; g <= tempIndex; g++) {
+                    points.push(rowThree[g].x);
+                    points.push(rowThree[g].y);
+                }
+
+            }
+            redLine.setPoints(points);
+        } else if (pos.shape.attrs.name == 'pegBlueOne' || pos.shape.attrs.name == 'pegBlueTwo') {
+
+            if (pos.shape.attrs.name == 'pegBlueOne') {
+                tempIndex = getPegIndex(pegBlueOne, rowOne);
+                points.push(rowOne[pegIndexes[1]].x);
+                points.push(rowOne[pegIndexes[1]].y);
+                updateGuide(pegBlueOne, 1, tempIndex, pegOneColor);
+                for (g = pegIndexes[1]; g <= tempIndex; g++) {
+                    points.push(rowOne[g].x);
+                    points.push(rowOne[g].y);
+                }
+
+            } else {
+                tempIndex = getPegIndex(pegBlueTwo, rowOne);
+                points.push(rowOne[pegIndexes[0]].x);
+                points.push(rowOne[pegIndexes[0]].y);
+                updateGuide(pegBlueTwo, 0, tempIndex, pegOneColor);
+                for (g = pegIndexes[0]; g <= tempIndex; g++) {
+                    points.push(rowOne[g].x);
+                    points.push(rowOne[g].y);
+                }
+
+            }
+            blueLine.setPoints(points);
+        } else if (pos.shape.attrs.name == 'pegYellowOne' || pos.shape.attrs.name == 'pegYellowTwo') {
+
+            if (pos.shape.attrs.name == 'pegYellowOne') {
+                tempIndex = getPegIndex(pegYellowOne, rowTwo);
+                points.push(rowTwo[pegIndexes[3]].x);
+                points.push(rowTwo[pegIndexes[3]].y);
+                updateGuide(pegYellowOne, 3, tempIndex, pegTwoColor);
+                for (g = pegIndexes[3]; g <= tempIndex; g++) {
+                    points.push(rowTwo[g].x);
+                    points.push(rowTwo[g].y);
+                }
+
+            } else {
+                tempIndex = getPegIndex(pegYellowTwo, rowOne);
+                points.push(rowTwo[pegIndexes[2]].x);
+                points.push(rowTwo[pegIndexes[2]].y);
+                updateGuide(pegYellowTwo, 2, tempIndex, pegTwoColor);
+                for (g = pegIndexes[2]; g <= tempIndex; g++) {
+                    points.push(rowTwo[g].x);
+                    points.push(rowTwo[g].y);
+                }
+
+            }
+            yellowLine.setPoints(points);
+        }
+        lineLayer.draw();
+    });
+
+    circle.on('dragstart', function (pos) {
+        drawing = true;
+        if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
+            redLine.show();
+        } else if (pos.shape.attrs.name == 'pegBlueOne' || pos.shape.attrs.name == 'pegBlueTwo') {
+            blueLine.show();
+        } else if (pos.shape.attrs.name == 'pegYellowOne' || pos.shape.attrs.name == 'pegYellowTwo') {
+            yellowLine.show();
+        }
+        messageLayer.show();
+        startX = pos.x;
+        startY = pos.y;
+    });
+
+    circle.on('dragend', function (pos) {
+        if (pos.shape.attrs.name == 'pegRedOne') {
+            redLine.hide();
+            pegIndexes[4] = placePeg(pos.shape, rowThree);
+        } else if (pos.shape.attrs.name == 'pegRedTwo') {
+            redLine.hide();
+            pegIndexes[5] = placePeg(pos.shape, rowThree);
+        } else if (pos.shape.attrs.name == 'pegBlueOne') {
+            blueLine.hide();
+            pegIndexes[0] = placePeg(pos.shape, rowOne);
+        } else if (pos.shape.attrs.name == 'pegBlueTwo') {
+            blueLine.hide();
+            pegIndexes[1] = placePeg(pos.shape, rowOne);
+        } else if (pos.shape.attrs.name == 'pegYellowOne') {
+            yellowLine.hide();
+            pegIndexes[2] = placePeg(pos.shape, rowTwo);
+        } else if (pos.shape.attrs.name == 'pegYellowTwo') {
+            yellowLine.hide();
+            pegIndexes[3] = placePeg(pos.shape, rowTwo);
+        }
+        messageLayer.hide();
+        lineLayer.draw();
+        pegLayer.draw();
+    });
+    return circle;
+}
+
+function drawPegs() {
+    pegBlueOne = drawPeg(pegOneColor, 'pegBlueOne');
+    pegLayer.add(pegBlueOne);
+
+    pegBlueTwo = drawPeg(pegOneColor, 'pegBlueTwo');
+    pegLayer.add(pegBlueTwo);
+
+    pegYellowOne = drawPeg(pegTwoColor, 'pegYellowOne');
+    pegLayer.add(pegYellowOne);
+
+    pegYellowTwo = drawPeg(pegTwoColor, 'pegYellowTwo');
+    pegLayer.add(pegYellowTwo);
+
+    pegRedOne = drawPeg(pegThreeColor, 'pegRedOne');
+    pegLayer.add(pegRedOne);
+
+    pegRedTwo = drawPeg(pegThreeColor, 'pegRedTwo');
+    pegLayer.add(pegRedTwo);
+
+    pegBlueOne.setX(rowOne[pegIndexes[0]].x);
+    pegBlueOne.setY(rowOne[pegIndexes[0]].y);
+    pegBlueTwo.setX(rowOne[pegIndexes[1]].x);
+    pegBlueTwo.setY(rowOne[pegIndexes[1]].y);
+
+    pegYellowOne.setX(rowTwo[pegIndexes[2]].x);
+    pegYellowOne.setY(rowTwo[pegIndexes[2]].y);
+    pegYellowTwo.setX(rowTwo[pegIndexes[3]].x);
+    pegYellowTwo.setY(rowTwo[pegIndexes[3]].y);
+
+    pegRedOne.setX(rowThree[pegIndexes[4]].x);
+    pegRedOne.setY(rowThree[pegIndexes[4]].y);
+    pegRedTwo.setX(rowThree[pegIndexes[5]].x);
+    pegRedTwo.setY(rowThree[pegIndexes[5]].y);
+}
+

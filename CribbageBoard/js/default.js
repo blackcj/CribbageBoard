@@ -7,6 +7,7 @@
 
     var app = WinJS.Application;
     var activation = Windows.ApplicationModel.Activation;
+    var display = Windows.Graphics.Display;
 
     app.onactivated = function (args) {
         if (args.detail.kind === activation.ActivationKind.launch) {
@@ -19,6 +20,9 @@
             }
             args.setPromise(WinJS.UI.processAll());
         }
+       
+        display.DisplayProperties.autoRotationPreferences = display.DisplayOrientations.landscape | display.DisplayOrientations.landscapeFlipped;
+
     };
 
     app.oncheckpoint = function (args) {

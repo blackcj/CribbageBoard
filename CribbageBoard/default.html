@@ -6,66 +6,25 @@
 
     <meta charset="utf-8" />
 
-    <title>CribbageBoard</title>
+    <title>Cribbage Board</title>
 
     <!-- WinJS references -->
     <link href="//Microsoft.WinJS.1.0/css/ui-dark.css" rel="stylesheet" />
     <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
     <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>
 
-    <!-- HelloWorld references -->
     <link href="/css/default.css" rel="stylesheet" />
     <script src="/js/default.js"></script>
     <script src="/js/utils.js"></script>
-
-	<style>
-    
-        html, body {
-        
-            background:#004A00;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        
-        }
-
-	    body {
-            -ms-flex-align: center;
-            -ms-flex-direction: column;
-            -ms-flex-pack: center;
-            display: -ms-flexbox;
-	    }
-    
-    </style>
-
     <script src="/js/kinetic-v4.3.1.min.js"> </script>
-    <script>
-        // 1024x768 minimum resolution!
-        // 
 
+    <script>
         var backgroundColor = '#1a1a1a';
 		var rowOne = new Array();
     	var rowTwo = new Array();
     	var rowThree = new Array();
 		
-		var _width = 1024;
-		var _height = 768;
-		
-		var _page;
-		var loader;
-		
-		var redPegOneIndex = -1;
-		var redPegTwoIndex = -1;
-		var selectedColor = "";
-		var pegIndexes = [0,1,0,1,0,1];
-		
-		var suites = ["h","s","c","d"];
-		var numbers = ["1","2","3","4","5","6","7","8","9","10","j","q","k"];
-		var deck = new Array();
-		
 		var stage;
-
-		buildArrays();
 
 		var pegIndexes = [0,1,0,1,0,1];
 		
@@ -84,46 +43,25 @@
 		var pegTwoColor = '#F3B200';
 		var pegThreeColor = '#AD103C';
 
-		function drawPegs() {
-		    pegBlueOne = drawPeg(pegOneColor, 'pegBlueOne');
-		    pegLayer.add(pegBlueOne);
+		buildArrays();
 
-		    pegBlueTwo = drawPeg(pegOneColor, 'pegBlueTwo');
-		    pegLayer.add(pegBlueTwo);
+		var simpleText = new Kinetic.Text({
+		    x: 0,
+		    y: 0,
+		    text: '',
+		    fontSize: 42,
+            fontSyle: 'bold',
+		    fontFamily: 'Calibri',
+		    fill: 'green',
+		    shadowColor: 'black',
+		    shadowBlur: 5
+		});
 
-		    pegYellowOne = drawPeg(pegTwoColor, 'pegYellowOne');
-		    pegLayer.add(pegYellowOne);
-
-		    pegYellowTwo = drawPeg(pegTwoColor, 'pegYellowTwo');
-		    pegLayer.add(pegYellowTwo);
-
-		    pegRedOne = drawPeg(pegThreeColor, 'pegRedOne');
-		    pegLayer.add(pegRedOne);
-
-		    pegRedTwo = drawPeg(pegThreeColor, 'pegRedTwo');
-		    pegLayer.add(pegRedTwo);
-
-		    pegBlueOne.setX(rowOne[pegIndexes[0]].x);
-		    pegBlueOne.setY(rowOne[pegIndexes[0]].y);
-		    pegBlueTwo.setX(rowOne[pegIndexes[1]].x);
-		    pegBlueTwo.setY(rowOne[pegIndexes[1]].y);
-
-		    pegYellowOne.setX(rowTwo[pegIndexes[2]].x);
-		    pegYellowOne.setY(rowTwo[pegIndexes[2]].y);
-		    pegYellowTwo.setX(rowTwo[pegIndexes[3]].x);
-		    pegYellowTwo.setY(rowTwo[pegIndexes[3]].y);
-
-		    pegRedOne.setX(rowThree[pegIndexes[4]].x);
-		    pegRedOne.setY(rowThree[pegIndexes[4]].y);
-		    pegRedTwo.setX(rowThree[pegIndexes[5]].x);
-		    pegRedTwo.setY(rowThree[pegIndexes[5]].y);
-
-
-		}
 		var redLine = new Kinetic.Line({
 		    points: [0, 0, 0, 0],
 		    stroke: pegThreeColor,
 		    strokeWidth: 5,
+		    opacity: 0.8,
 		    lineCap: 'round',
 		    lineJoin: 'round'
 		});
@@ -132,230 +70,96 @@
 		    points: [0, 0, 0, 0],
 		    stroke: pegTwoColor,
 		    strokeWidth: 5,
+		    opacity: 0.8,
 		    lineCap: 'round',
 		    lineJoin: 'round'
 		});
 
+        /**
+         * Used for displaying the blue line in the app.
+         *
+         */
 		var blueLine = new Kinetic.Line({
 		    points: [0, 0, 0, 0],
 		    stroke: pegOneColor,
 		    strokeWidth: 5,
+		    opacity: 0.8,
 		    lineCap: 'round',
 		    lineJoin: 'round'
 		});
 
-		function getPegIndex(peg, row)
-		{
-		    var index = 0;
-		    var closest = 500;
-		    var pegPoint = new Point(peg.getX(), peg.getY());
-		    for(var p = 0; p < row.length; p++)
-		    {
-                var dist = getDistanceGivenPoints(pegPoint, row[p]);
-        
-                if(dist < closest){
-                    closest = dist;
-                    index = p;
-                    if(dist < 4){
-                        continue;
-		            }
-		        }
-		    }
-		    return index;
-		}
-
-		function drawPeg(color, name) {
-		    var circle = new Kinetic.Circle({
-		        x: stage.getWidth() / 2,
-		        y: stage.getHeight() / 2,
-		        radius: 16,
-		        fill: color,
-                name: name,
-                draggable: true
-		    });
-		    console.log(name);
-		    circle.on('dragmove', function (pos) {
-		        var points = new Array();
-		        if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
-		            if (pos.shape.attrs.name == 'pegRedOne') {
-		                tempIndex = getPegIndex(pegRedOne, rowThree);
-		                points.push(rowThree[pegIndexes[5]].x);
-		                points.push(rowThree[pegIndexes[5]].y);
-		                //updateGuide(_page.pegBlueOne, 1, tempIndex, 0x7FCA9D);
-		                for (g = pegIndexes[5]; g <= tempIndex; g++) {
-		                    points.push(rowThree[g].x);
-		                    points.push(rowThree[g].y);
-		                }
-		            } else {
-		                tempIndex = getPegIndex(pegRedTwo, rowThree);
-		                points.push(rowThree[pegIndexes[4]].x);
-		                points.push(rowThree[pegIndexes[4]].y);
-		                //updateGuide(_page.pegBlueTwo, 0, tempIndex, 0x7FCA9D);
-		                for (g = pegIndexes[4]; g <= tempIndex; g++) {
-		                    points.push(rowThree[g].x);
-		                    points.push(rowThree[g].y);
-		                }
-
-		            }
-		            redLine.setPoints(points);
-		        } else if (pos.shape.attrs.name == 'pegBlueOne' || pos.shape.attrs.name == 'pegBlueTwo') {
-
-		            if (pos.shape.attrs.name == 'pegBlueOne') {
-		                tempIndex = getPegIndex(pegBlueOne, rowOne);
-		                points.push(rowOne[pegIndexes[1]].x);
-		                points.push(rowOne[pegIndexes[1]].y);
-		                //updateGuide(_page.pegBlueOne, 1, tempIndex, 0x7FCA9D);
-		                for (g = pegIndexes[1]; g <= tempIndex; g++) {
-		                    points.push(rowOne[g].x);
-		                    points.push(rowOne[g].y);
-		                }
-
-		            } else {
-		                tempIndex = getPegIndex(pegBlueTwo, rowOne);
-		                points.push(rowOne[pegIndexes[0]].x);
-		                points.push(rowOne[pegIndexes[0]].y);
-		                //updateGuide(_page.pegBlueTwo, 0, tempIndex, 0x7FCA9D);
-		                for (g = pegIndexes[0]; g <= tempIndex; g++) {
-		                    points.push(rowOne[g].x);
-		                    points.push(rowOne[g].y);
-		                }
-
-		            }
-		            blueLine.setPoints(points);
-		        } else if (pos.shape.attrs.name == 'pegYellowOne' || pos.shape.attrs.name == 'pegYellowTwo') {
-
-		            if (pos.shape.attrs.name == 'pegYellowOne') {
-		                tempIndex = getPegIndex(pegYellowOne, rowTwo);
-		                points.push(rowOne[pegIndexes[3]].x);
-		                points.push(rowOne[pegIndexes[3]].y);
-		                //updateGuide(_page.pegBlueOne, 1, tempIndex, 0x7FCA9D);
-		                for (g = pegIndexes[3]; g <= tempIndex; g++) {
-		                    points.push(rowTwo[g].x);
-		                    points.push(rowTwo[g].y);
-		                }
-
-		            } else {
-		                tempIndex = getPegIndex(pegYellowTwo, rowOne);
-		                points.push(rowTwo[pegIndexes[2]].x);
-		                points.push(rowTwo[pegIndexes[2]].y);
-		                //updateGuide(_page.pegBlueTwo, 0, tempIndex, 0x7FCA9D);
-		                for (g = pegIndexes[2]; g <= tempIndex; g++) {
-		                    points.push(rowTwo[g].x);
-		                    points.push(rowTwo[g].y);
-		                }
-
-		            }
-		            yellowLine.setPoints(points);
-		        }
-		        lineLayer.draw();
-		    });
-
-		    circle.on('dragstart', function (pos) {
-		        drawing = true;
-		        if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
-		            redLine.show();
-		        } else if (pos.shape.attrs.name == 'pegBlueOne' || pos.shape.attrs.name == 'pegBlueTwo') {
-		            blueLine.show();
-		        } else if (pos.shape.attrs.name == 'pegYellowOne' || pos.shape.attrs.name == 'pegYellowTwo') {
-		            yellowLine.show();
-		        }
-		        startX = pos.x;
-		        startY = pos.y;
-		        writeMessage(messageLayer, pos.shape.attrs.name + ' down ' + pos.x + ',' + pos.y);
-		    });
-
-		    circle.on('dragend', function (pos) {
-		        if (pos.shape.attrs.name == 'pegRedOne') {
-		            redLine.hide();
-		            pegIndexes[4] = placePeg(pos.shape, rowThree);
-		        } else if (pos.shape.attrs.name == 'pegRedTwo') {
-		            redLine.hide();
-		            pegIndexes[5] = placePeg(pos.shape, rowThree);
-		        } else if (pos.shape.attrs.name == 'pegBlueOne') {
-		            blueLine.hide();
-		            pegIndexes[0] = placePeg(pos.shape, rowOne);
-		        } else if (pos.shape.attrs.name == 'pegBlueTwo') {
-		            blueLine.hide();
-		            pegIndexes[1] = placePeg(pos.shape, rowOne);
-		        } else if (pos.shape.attrs.name == 'pegYellowOne') {
-		            yellowLine.hide();
-		            pegIndexes[2] = placePeg(pos.shape, rowTwo);
-		        } else if (pos.shape.attrs.name == 'pegYellowTwo') {
-		            yellowLine.hide();
-		            pegIndexes[3] = placePeg(pos.shape, rowTwo);
-		        }
-		        lineLayer.draw();
-		        pegLayer.draw();
-		        //writeMessage(messageLayer, pos.shape.attrs.name + ' up ' + pos.x + ',' + pos.y);
-		    });
-		    return circle;
-		}
-
+        /**
+         * When the screen size changes, update the layout of the app.
+         *
+         */
 		window.onresize = function(event) {
 		    init();
 		}
 
+        /**
+         * Minimum size of the stage for a Windows 8 tablet app is 1024x768.
+         *
+         */
 		function init() {
+            // Calculate the scale based on the window size.
 		    var scale = window.innerHeight / 768;
-		    stage = new Kinetic.Stage({
-		        container: 'container',
-		        width: 1024 * scale,
-		        height: window.innerHeight,
-		        scale: scale
-		    });
-		    var backgroundLayer = new Kinetic.Layer();
-		    var rect = new Kinetic.Rect({
-		        x: 0,
-		        y: 40,
-		        width: 1024 * scale,
-		        height: 768 - 100,
-		        fill: backgroundColor
-		    });
 
-		    backgroundLayer.add(rect);
+            // Update the container div
+		    document.getElementById('container').style.width = (1024 * scale) + "px";
+		    document.getElementById('container').style.height = window.innerHeight + "px";
+           
+             if (stage) {
+                // If we have a stage, resize.
+		        stage.setWidth(1024 * scale);
+		        stage.setHeight(window.innerHeight);
+		        stage.setScale(scale);
+		        stage.draw();
+             } else {
+                // If we don't have a stage, build one and initialize the app
+		        stage = new Kinetic.Stage({
+		            container: 'container',
+		            width: 1024 * scale,
+		            height: window.innerHeight,
+		            scale: scale
+		        });
+		        var backgroundLayer = new Kinetic.Layer();
+		        stage.add(backgroundLayer);
 
-		    stage.add(backgroundLayer);
+		        var imageObj = new Image();
+		        imageObj.onload = function () {
+		            var board = new Kinetic.Image({
+		                x: 0,
+		                y: 0,
+		                image: imageObj,
+		                width: 1024,
+		                height: 768
+		            });
 
-		    showDots();
-		    drawPegs();
-		    lineLayer.add(redLine);
-		    lineLayer.add(blueLine);
-		    lineLayer.add(yellowLine);
-		    stage.add(lineLayer);
-		    stage.add(pegLayer);
-		    stage.add(messageLayer);
-            
+		            // add the shape to the layer
+		            backgroundLayer.add(board);
+		            backgroundLayer.draw();
+		        };
+		        imageObj.src = 'images/cribbage.png';
+
+		        //showDots(); // Used for debugging
+		        drawPegs();
+		        lineLayer.add(redLine);
+		        lineLayer.add(blueLine);
+		        lineLayer.add(yellowLine);
+		        stage.add(lineLayer);
+		        stage.add(pegLayer);
+		        messageLayer.add(simpleText);
+		        stage.add(messageLayer);
+		    }
 		}
-		function writeMessage(messageLayer, message) {
-		    var context = messageLayer.getContext();
-		    messageLayer.clear();
-		    context.font = '18pt Calibri';
-		    context.fillStyle = 'black';
-		    context.fillText(message, 10, 25);
+
+		function writeMessage(messageLayer, message, xPos, yPos, color) {
+		    simpleText.setText(message);
+		    simpleText.setX(xPos - 20);
+		    simpleText.setY(yPos - 100);
+		    simpleText.setFill(color);
+		    messageLayer.draw();
 		}
-		
-		writeMessage(messageLayer, 'hello world');
-
-		/*
-		function drawImage(imageObj) { 
-			var layer = new Kinetic.Layer();
-			// darth vader
-			dot1 = new Kinetic.Image({
-			  image: imageObj,
-			  x: stage.getWidth() / 2 - 200 / 2,
-			  y: stage.getHeight() / 2 - 137 / 2,
-			  width: 40,
-			  height: 40,
-			  draggable: true
-			});
-
-			layer.add(dot1);
-
-
-			stage.add(layer);
-		}
-		
-		*/
 
 		function placePeg(peg, row)
 		{
@@ -408,22 +212,8 @@
 		  }
 		  peg.setX(row[blueIndex].x);
 		  peg.setY(row[blueIndex].y);
-		  //peg.draw();
-		  writeMessage(messageLayer, peg.attrs.name + ' placed at ' + row[blueIndex].x + ',' + row[blueIndex].y);
+
 		  return blueIndex;
-		}
-		
-		function ExtractNumber(value)
-		{
-			var n = parseInt(value);
-			
-			return n == null || isNaN(n) ? 0 : n;
-		}
-		
-		// this is simply a shortcut for the eyes and fingers
-		function $(id)
-		{
-			return document.getElementById(id);
 		}
 	</script>
 </head>

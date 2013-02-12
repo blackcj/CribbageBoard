@@ -1,4 +1,9 @@
-﻿html, body {
+﻿* {
+   margin: 0px;
+   padding: 0px;
+}
+
+html, body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -9,15 +14,18 @@ body {
     -ms-flex-direction: column;
     -ms-flex-pack: center;
     display: -ms-flexbox;
+            
+    background-image:url(/images/felt.png);
+    background-size:cover;
+            
 }
 
-.fixedlayout {
-    -ms-grid-columns: 1fr;
-    -ms-grid-rows: 1fr;
-    display: -ms-grid;
-    height: 768px;
-    width: 1024px;
+#container {
+    margin-top: -10px;
+    height: 100%;
+    /*background:red;*/
 }
+
 
 @media screen and (-ms-view-state: fullscreen-landscape) {
 }
