@@ -35,12 +35,14 @@
 		var pegRedOne;
 		var pegRedTwo;
 
-		var pegLayer = new Kinetic.Layer();
+		var pegRedLayer = new Kinetic.Layer();
+		var pegYellowLayer = new Kinetic.Layer();
+		var pegBlueLayer = new Kinetic.Layer();
 		var messageLayer = new Kinetic.Layer();
 		var lineLayer = new Kinetic.Layer();
         
 		var pegOneColor = '#2572EB';
-		var pegTwoColor = '#F3B200';
+		var pegTwoColor = '#AED136';
 		var pegThreeColor = '#AD103C';
 
 		buildArrays();
@@ -52,16 +54,16 @@
 		    fontSize: 42,
             fontSyle: 'bold',
 		    fontFamily: 'Calibri',
-		    fill: 'green',
+		    fill: 'green'/*,
 		    shadowColor: 'black',
-		    shadowBlur: 5
+		    shadowBlur: 5*/
 		});
 
 		var redLine = new Kinetic.Line({
 		    points: [0, 0, 0, 0],
 		    stroke: pegThreeColor,
 		    strokeWidth: 5,
-		    opacity: 0.8,
+		    opacity: 1,
 		    lineCap: 'round',
 		    lineJoin: 'round'
 		});
@@ -70,7 +72,7 @@
 		    points: [0, 0, 0, 0],
 		    stroke: pegTwoColor,
 		    strokeWidth: 5,
-		    opacity: 0.8,
+		    opacity: 1,
 		    lineCap: 'round',
 		    lineJoin: 'round'
 		});
@@ -83,7 +85,7 @@
 		    points: [0, 0, 0, 0],
 		    stroke: pegOneColor,
 		    strokeWidth: 5,
-		    opacity: 0.8,
+		    opacity: 1,
 		    lineCap: 'round',
 		    lineJoin: 'round'
 		});
@@ -115,6 +117,15 @@
 		        stage.setScale(scale);
 		        stage.draw();
              } else {
+                 var sources = {
+                     redPegImage: 'images/pegRed.png',
+                     yellowPegImage: 'images/pegGreen.png',
+                     bluePegImage: 'images/pegBlue.png'
+                 };
+
+                 loadImages(sources, function (images) {
+                     drawPegs(images);
+                 });
                 // If we don't have a stage, build one and initialize the app
 		        stage = new Kinetic.Stage({
 		            container: 'container',
@@ -142,21 +153,42 @@
 		        imageObj.src = 'images/cribbage.png';
 
 		        //showDots(); // Used for debugging
-		        drawPegs();
+		        //drawPegs();
 		        lineLayer.add(redLine);
 		        lineLayer.add(blueLine);
 		        lineLayer.add(yellowLine);
 		        stage.add(lineLayer);
-		        stage.add(pegLayer);
+		        stage.add(pegRedLayer);
+		        stage.add(pegYellowLayer);
+		        stage.add(pegBlueLayer);
 		        messageLayer.add(simpleText);
 		        stage.add(messageLayer);
 		    }
 		}
 
+		function loadImages(sources, callback) {
+		    var images = {};
+		    var loadedImages = 0;
+		    var numImages = 0;
+		    // get num of sources
+		    for (var src in sources) {
+		        numImages++;
+		    }
+		    for (var src in sources) {
+		        images[src] = new Image();
+		        images[src].onload = function () {
+		            if (++loadedImages >= numImages) {
+		                callback(images);
+		            }
+		        };
+		        images[src].src = sources[src];
+		    }
+		}
+
 		function writeMessage(messageLayer, message, xPos, yPos, color) {
 		    simpleText.setText(message);
-		    simpleText.setX(xPos - 20);
-		    simpleText.setY(yPos - 100);
+		    //simpleText.setX(xPos - 20);
+		    //simpleText.setY(yPos - 100);
 		    simpleText.setFill(color);
 		    messageLayer.draw();
 		}

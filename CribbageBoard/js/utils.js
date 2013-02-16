@@ -388,22 +388,24 @@ function showDots() {
     // add the layer to the stage
     stage.add(layer);
 }
-
+var index = 0;
+var closest = 500;
+var pegPoint;
 /**
-         * Create peg and add event listeners.
-         *
-         */
+* Create peg and add event listeners.
+*
+*/
 function getPegIndex(peg, row) {
-    var index = 0;
-    var closest = 500;
-    var pegPoint = new Point(peg.getX(), peg.getY());
+    index = 0;
+    closest = 500;
+    pegPoint = new Point(peg.getX(), peg.getY());
     for (var p = 0; p < row.length; p++) {
         var dist = getDistanceGivenPoints(pegPoint, row[p]);
 
         if (dist < closest) {
             closest = dist;
             index = p;
-            if (dist < 4) {
+            if (dist < 5) {
                 continue;
             }
         }
@@ -427,98 +429,115 @@ function updateGuide(peg, i, tempIndex, color) {
     }
 }
 
+var points;
+var counter = 1;
+var oldPoint = new Point(0,0);
+var newPoint = new Point(0, 0);
+var pointDist = 0;
+
 /**
  * Create peg and add event listeners.
  *
  */
-function drawPeg(color, name) {
+
+function drawPeg(color, name, image) {
     var circle = new Kinetic.Circle({
-        x: stage.getWidth() / 2,
-        y: stage.getHeight() / 2,
+        x: 0,
+        y: 0,
         radius: 18,
-        fill: color,
         name: name,
-        opacity: 0.4,
-        draggable: true
+        draggable: true,
+        fillPatternImage: image,
+        fillPatternOffset: [-20, -20]
     });
 
     // pos is a reference to the event. pos.x and pos.y will return coordinates. pos.shape returns the peg targeted in the event.
+    
     circle.on('dragmove', function (pos) {
-        var points = new Array();
-        if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
-            if (pos.shape.attrs.name == 'pegRedOne') {
-                tempIndex = getPegIndex(pegRedOne, rowThree);
-                points.push(rowThree[pegIndexes[5]].x);
-                points.push(rowThree[pegIndexes[5]].y);
-                updateGuide(pegRedOne, 5, tempIndex, pegThreeColor);
-                for (g = pegIndexes[5]; g <= tempIndex; g++) {
-                    points.push(rowThree[g].x);
-                    points.push(rowThree[g].y);
-                }
-            } else {
-                tempIndex = getPegIndex(pegRedTwo, rowThree);
-                points.push(rowThree[pegIndexes[4]].x);
-                points.push(rowThree[pegIndexes[4]].y);
-                updateGuide(pegRedTwo, 4, tempIndex, pegThreeColor);
-                for (g = pegIndexes[4]; g <= tempIndex; g++) {
-                    points.push(rowThree[g].x);
-                    points.push(rowThree[g].y);
-                }
+        //console.log(counter % 20);
+        newPoint = new Point(pos.shape.getX(), pos.shape.getY());
+        pointDist = getDistanceGivenPoints(oldPoint, newPoint);
+        oldPoint = newPoint;
+        if (counter % 5 == 0 && pointDist < 7) {
+            counter = 1;
+            points = new Array();
+            if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
+                if (pos.shape.attrs.name == 'pegRedOne') {
+                    tempIndex = getPegIndex(pegRedOne, rowThree);
+                    points.push(rowThree[pegIndexes[5]].x);
+                    points.push(rowThree[pegIndexes[5]].y);
+                    updateGuide(pegRedOne, 5, tempIndex, pegThreeColor);
+                    for (g = pegIndexes[5]; g <= tempIndex; g++) {
+                        points.push(rowThree[g].x);
+                        points.push(rowThree[g].y);
+                    }
+                } else {
+                    tempIndex = getPegIndex(pegRedTwo, rowThree);
+                    points.push(rowThree[pegIndexes[4]].x);
+                    points.push(rowThree[pegIndexes[4]].y);
+                    updateGuide(pegRedTwo, 4, tempIndex, pegThreeColor);
+                    for (g = pegIndexes[4]; g <= tempIndex; g++) {
+                        points.push(rowThree[g].x);
+                        points.push(rowThree[g].y);
+                    }
 
+                }
+                redLine.setPoints(points);
+            } else if (pos.shape.attrs.name == 'pegBlueOne' || pos.shape.attrs.name == 'pegBlueTwo') {
+
+                if (pos.shape.attrs.name == 'pegBlueOne') {
+                    tempIndex = getPegIndex(pegBlueOne, rowOne);
+                    points.push(rowOne[pegIndexes[1]].x);
+                    points.push(rowOne[pegIndexes[1]].y);
+                    updateGuide(pegBlueOne, 1, tempIndex, pegOneColor);
+                    for (g = pegIndexes[1]; g <= tempIndex; g++) {
+                        points.push(rowOne[g].x);
+                        points.push(rowOne[g].y);
+                    }
+
+                } else {
+                    tempIndex = getPegIndex(pegBlueTwo, rowOne);
+                    points.push(rowOne[pegIndexes[0]].x);
+                    points.push(rowOne[pegIndexes[0]].y);
+                    updateGuide(pegBlueTwo, 0, tempIndex, pegOneColor);
+                    for (g = pegIndexes[0]; g <= tempIndex; g++) {
+                        points.push(rowOne[g].x);
+                        points.push(rowOne[g].y);
+                    }
+
+                }
+                blueLine.setPoints(points);
+            } else if (pos.shape.attrs.name == 'pegYellowOne' || pos.shape.attrs.name == 'pegYellowTwo') {
+
+                if (pos.shape.attrs.name == 'pegYellowOne') {
+                    tempIndex = getPegIndex(pegYellowOne, rowTwo);
+                    points.push(rowTwo[pegIndexes[3]].x);
+                    points.push(rowTwo[pegIndexes[3]].y);
+                    updateGuide(pegYellowOne, 3, tempIndex, pegTwoColor);
+                    for (g = pegIndexes[3]; g <= tempIndex; g++) {
+                        points.push(rowTwo[g].x);
+                        points.push(rowTwo[g].y);
+                    }
+
+                } else {
+                    tempIndex = getPegIndex(pegYellowTwo, rowOne);
+                    points.push(rowTwo[pegIndexes[2]].x);
+                    points.push(rowTwo[pegIndexes[2]].y);
+                    updateGuide(pegYellowTwo, 2, tempIndex, pegTwoColor);
+                    for (g = pegIndexes[2]; g <= tempIndex; g++) {
+                        points.push(rowTwo[g].x);
+                        points.push(rowTwo[g].y);
+                    }
+
+                }
+                yellowLine.setPoints(points);
             }
-            redLine.setPoints(points);
-        } else if (pos.shape.attrs.name == 'pegBlueOne' || pos.shape.attrs.name == 'pegBlueTwo') {
-
-            if (pos.shape.attrs.name == 'pegBlueOne') {
-                tempIndex = getPegIndex(pegBlueOne, rowOne);
-                points.push(rowOne[pegIndexes[1]].x);
-                points.push(rowOne[pegIndexes[1]].y);
-                updateGuide(pegBlueOne, 1, tempIndex, pegOneColor);
-                for (g = pegIndexes[1]; g <= tempIndex; g++) {
-                    points.push(rowOne[g].x);
-                    points.push(rowOne[g].y);
-                }
-
-            } else {
-                tempIndex = getPegIndex(pegBlueTwo, rowOne);
-                points.push(rowOne[pegIndexes[0]].x);
-                points.push(rowOne[pegIndexes[0]].y);
-                updateGuide(pegBlueTwo, 0, tempIndex, pegOneColor);
-                for (g = pegIndexes[0]; g <= tempIndex; g++) {
-                    points.push(rowOne[g].x);
-                    points.push(rowOne[g].y);
-                }
-
-            }
-            blueLine.setPoints(points);
-        } else if (pos.shape.attrs.name == 'pegYellowOne' || pos.shape.attrs.name == 'pegYellowTwo') {
-
-            if (pos.shape.attrs.name == 'pegYellowOne') {
-                tempIndex = getPegIndex(pegYellowOne, rowTwo);
-                points.push(rowTwo[pegIndexes[3]].x);
-                points.push(rowTwo[pegIndexes[3]].y);
-                updateGuide(pegYellowOne, 3, tempIndex, pegTwoColor);
-                for (g = pegIndexes[3]; g <= tempIndex; g++) {
-                    points.push(rowTwo[g].x);
-                    points.push(rowTwo[g].y);
-                }
-
-            } else {
-                tempIndex = getPegIndex(pegYellowTwo, rowOne);
-                points.push(rowTwo[pegIndexes[2]].x);
-                points.push(rowTwo[pegIndexes[2]].y);
-                updateGuide(pegYellowTwo, 2, tempIndex, pegTwoColor);
-                for (g = pegIndexes[2]; g <= tempIndex; g++) {
-                    points.push(rowTwo[g].x);
-                    points.push(rowTwo[g].y);
-                }
-
-            }
-            yellowLine.setPoints(points);
+            lineLayer.draw();
+        } else {
+            counter++;
         }
-        lineLayer.draw();
     });
-
+    
     circle.on('dragstart', function (pos) {
         drawing = true;
         if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
@@ -537,48 +556,54 @@ function drawPeg(color, name) {
         if (pos.shape.attrs.name == 'pegRedOne') {
             redLine.hide();
             pegIndexes[4] = placePeg(pos.shape, rowThree);
+            pegRedLayer.draw();
         } else if (pos.shape.attrs.name == 'pegRedTwo') {
             redLine.hide();
             pegIndexes[5] = placePeg(pos.shape, rowThree);
+            pegRedLayer.draw();
         } else if (pos.shape.attrs.name == 'pegBlueOne') {
             blueLine.hide();
             pegIndexes[0] = placePeg(pos.shape, rowOne);
+            pegBlueLayer.draw();
         } else if (pos.shape.attrs.name == 'pegBlueTwo') {
             blueLine.hide();
             pegIndexes[1] = placePeg(pos.shape, rowOne);
+            pegBlueLayer.draw();
         } else if (pos.shape.attrs.name == 'pegYellowOne') {
             yellowLine.hide();
             pegIndexes[2] = placePeg(pos.shape, rowTwo);
+            pegYellowLayer.draw();
         } else if (pos.shape.attrs.name == 'pegYellowTwo') {
             yellowLine.hide();
             pegIndexes[3] = placePeg(pos.shape, rowTwo);
+            pegYellowLayer.draw();
         }
         messageLayer.hide();
         lineLayer.draw();
-        pegLayer.draw();
+
     });
     return circle;
 }
 
-function drawPegs() {
-    pegBlueOne = drawPeg(pegOneColor, 'pegBlueOne');
-    pegLayer.add(pegBlueOne);
+function drawPegs(images) {
+    pegBlueOne = drawPeg(pegOneColor, 'pegBlueOne', images.bluePegImage);
+    pegBlueLayer.add(pegBlueOne);
 
-    pegBlueTwo = drawPeg(pegOneColor, 'pegBlueTwo');
-    pegLayer.add(pegBlueTwo);
+    pegBlueTwo = drawPeg(pegOneColor, 'pegBlueTwo', images.bluePegImage);
+    pegBlueLayer.add(pegBlueTwo);
 
-    pegYellowOne = drawPeg(pegTwoColor, 'pegYellowOne');
-    pegLayer.add(pegYellowOne);
+    pegYellowOne = drawPeg(pegTwoColor, 'pegYellowOne', images.yellowPegImage);
+    pegYellowLayer.add(pegYellowOne);
 
-    pegYellowTwo = drawPeg(pegTwoColor, 'pegYellowTwo');
-    pegLayer.add(pegYellowTwo);
+    pegYellowTwo = drawPeg(pegTwoColor, 'pegYellowTwo', images.yellowPegImage);
+    pegYellowLayer.add(pegYellowTwo);
 
-    pegRedOne = drawPeg(pegThreeColor, 'pegRedOne');
-    pegLayer.add(pegRedOne);
+    pegRedOne = drawPeg(pegThreeColor, 'pegRedOne', images.redPegImage);
+    pegRedLayer.add(pegRedOne);
 
-    pegRedTwo = drawPeg(pegThreeColor, 'pegRedTwo');
-    pegLayer.add(pegRedTwo);
-
+    pegRedTwo = drawPeg(pegThreeColor, 'pegRedTwo', images.redPegImage);
+    pegRedLayer.add(pegRedTwo);
+    
     pegBlueOne.setX(rowOne[pegIndexes[0]].x);
     pegBlueOne.setY(rowOne[pegIndexes[0]].y);
     pegBlueTwo.setX(rowOne[pegIndexes[1]].x);
@@ -593,5 +618,10 @@ function drawPegs() {
     pegRedOne.setY(rowThree[pegIndexes[4]].y);
     pegRedTwo.setX(rowThree[pegIndexes[5]].x);
     pegRedTwo.setY(rowThree[pegIndexes[5]].y);
+
+    pegBlueLayer.draw();
+    pegYellowLayer.draw();
+    pegRedLayer.draw();
+    
 }
 
