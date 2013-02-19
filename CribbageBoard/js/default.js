@@ -2,12 +2,33 @@
 // http://go.microsoft.com/fwlink/?LinkId=232508
 (function () {
     "use strict";
+    
 
     WinJS.Binding.optimizeBindingReferences = true;
 
     var app = WinJS.Application;
     var activation = Windows.ApplicationModel.Activation;
     var display = Windows.Graphics.Display;
+    app.addEventListener('activated', function(evt) {
+        var appState = activation.ApplicationExecutionState;
+        console.log(evt.detail.previousExecutionState);
+        if(evt.detail.previousExecutionState == appState.notRunning || evt.detail.previousExecutionState == appState.closedByUser) {
+            pegIndexes = [0,1,0,1,0,1];
+        }
+        if(evt.detail.previousExecutionState == appState.terminated) {
+            pegIndexes = app.sessionState.pegIndexes;
+        }
+        if (isLoaded) {
+            init();
+        } else {
+            // Add backup if load happens in the wrong order.
+        }
+    });
+
+    app.addEventListener('checkpoint', function() {
+        app.sessionState.pegIndexes = pegIndexes;
+    });
+
 
     app.onactivated = function (args) {
         if (args.detail.kind === activation.ActivationKind.launch) {
