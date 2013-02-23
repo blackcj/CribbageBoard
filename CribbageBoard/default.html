@@ -13,6 +13,11 @@
     <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
     <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>
 
+    <script>
+
+        var isReady = false;
+    </script>
+
     <link href="/css/default.css" rel="stylesheet" />
     <script src="/js/default.js"></script>
     <script src="/js/utils.js"></script>
@@ -52,7 +57,7 @@
 		    x: 0,
 		    y: 0,
 		    text: '',
-		    fontSize: 42,
+		    fontSize: 48,
             fontSyle: 'bold',
 		    fontFamily: 'Calibri',
 		    fill: 'green'/*,
@@ -101,6 +106,9 @@
 
 		function loadComplete() {
 		    isLoaded = true;
+		    if (isReady) {
+		        init();
+		    }
 		}
 
         /**

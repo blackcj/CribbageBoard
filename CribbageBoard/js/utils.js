@@ -429,6 +429,8 @@ function updateGuide(peg, i, tempIndex, color) {
     }
 }
 
+
+
 var points;
 var counter = 1;
 var oldPoint = new Point(0,0);
@@ -439,14 +441,15 @@ var pointDist = 0;
  * Create peg and add event listeners.
  *
  */
-
 function drawPeg(color, name, image) {
     var circle = new Kinetic.Circle({
         x: 0,
         y: 0,
-        radius: 18,
+        radius: 19,
         name: name,
         draggable: true,
+        /*stroke: color,
+        strokeWidth: 2,*/
         fillPatternImage: image,
         fillPatternOffset: [-20, -20]
     });
@@ -458,7 +461,7 @@ function drawPeg(color, name, image) {
         newPoint = new Point(pos.shape.getX(), pos.shape.getY());
         pointDist = getDistanceGivenPoints(oldPoint, newPoint);
         oldPoint = newPoint;
-        if (counter % 5 == 0 && pointDist < 7) {
+        if (counter % 3 == 0 && pointDist < 10) {
             counter = 1;
             points = new Array();
             if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
@@ -532,6 +535,7 @@ function drawPeg(color, name, image) {
                 }
                 yellowLine.setPoints(points);
             }
+            messageLayer.show();
             lineLayer.draw();
         } else {
             counter++;
@@ -547,7 +551,6 @@ function drawPeg(color, name, image) {
         } else if (pos.shape.attrs.name == 'pegYellowOne' || pos.shape.attrs.name == 'pegYellowTwo') {
             yellowLine.show();
         }
-        messageLayer.show();
         startX = pos.x;
         startY = pos.y;
     });
@@ -556,26 +559,32 @@ function drawPeg(color, name, image) {
         if (pos.shape.attrs.name == 'pegRedOne') {
             redLine.hide();
             pegIndexes[4] = placePeg(pos.shape, rowThree);
+            normalizePegs(4, 5, pegRedOne, pegRedTwo);
             pegRedLayer.draw();
         } else if (pos.shape.attrs.name == 'pegRedTwo') {
             redLine.hide();
             pegIndexes[5] = placePeg(pos.shape, rowThree);
+            normalizePegs(4, 5, pegRedOne, pegRedTwo);
             pegRedLayer.draw();
         } else if (pos.shape.attrs.name == 'pegBlueOne') {
             blueLine.hide();
             pegIndexes[0] = placePeg(pos.shape, rowOne);
+            normalizePegs(0, 1, pegBlueOne, pegBlueTwo);
             pegBlueLayer.draw();
         } else if (pos.shape.attrs.name == 'pegBlueTwo') {
             blueLine.hide();
             pegIndexes[1] = placePeg(pos.shape, rowOne);
+            normalizePegs(0, 1, pegBlueOne, pegBlueTwo);
             pegBlueLayer.draw();
         } else if (pos.shape.attrs.name == 'pegYellowOne') {
             yellowLine.hide();
             pegIndexes[2] = placePeg(pos.shape, rowTwo);
+            normalizePegs(2, 3, pegYellowOne, pegYellowTwo);
             pegYellowLayer.draw();
         } else if (pos.shape.attrs.name == 'pegYellowTwo') {
             yellowLine.hide();
             pegIndexes[3] = placePeg(pos.shape, rowTwo);
+            normalizePegs(2, 3, pegYellowOne, pegYellowTwo);
             pegYellowLayer.draw();
         }
         messageLayer.hide();
@@ -583,6 +592,88 @@ function drawPeg(color, name, image) {
 
     });
     return circle;
+}
+
+/**
+    * Adjusts hit area for pegs when they are right next to each other.
+    *  
+    * @param peg1
+    * @param peg2
+    * 
+    */ 
+function normalizePegs(p1, p2, peg1, peg2)
+{
+    if (p1 == 0) {
+        peg1.setX(rowOne[pegIndexes[p1]].x);
+        peg1.setY(rowOne[pegIndexes[p1]].y);
+        peg2.setX(rowOne[pegIndexes[p2]].x);
+        peg2.setY(rowOne[pegIndexes[p2]].y);
+    }
+
+    if (p1 == 2) {
+        peg1.setX(rowTwo[pegIndexes[p1]].x);
+        peg1.setY(rowTwo[pegIndexes[p1]].y);
+        peg2.setX(rowTwo[pegIndexes[p2]].x);
+        peg2.setY(rowTwo[pegIndexes[p2]].y);
+    }
+
+    if (p1 == 4) {
+        peg1.setX(rowThree[pegIndexes[p1]].x);
+        peg1.setY(rowThree[pegIndexes[p1]].y);
+        peg2.setX(rowThree[pegIndexes[p2]].x);
+        peg2.setY(rowThree[pegIndexes[p2]].y);
+    }
+
+    peg1.setFillPatternOffset([-20, -20]);
+    peg2.setFillPatternOffset([-20, -20]);
+
+    if(pegIndexes[p1] - pegIndexes[p2] == -1){
+        if (pegIndexes[p1] <= 36 || pegIndexes[p1] >= 82) {
+            peg1.setX(peg1.getX() - 10);
+            peg2.setX(peg2.getX() + 10);
+            peg1.setFillPatternOffset([-30, -20]);
+            peg2.setFillPatternOffset([-10, -20]);
+        } else if (pegIndexes[p1] > 36 && pegIndexes[p1] < 42) {
+            peg1.setY(peg1.getY() - 10);
+            peg2.setY(peg2.getY() + 10);
+            peg1.setFillPatternOffset([-20, -30]);
+            peg2.setFillPatternOffset([-20, -10]);
+        }else if(pegIndexes[p1] >= 42 && pegIndexes[p1] <= 77){
+            peg1.setX(peg1.getX() + 10);
+            peg2.setX(peg2.getX() - 10);
+            peg1.setFillPatternOffset([-10, -20]);
+            peg2.setFillPatternOffset([-30, -20]);
+        }else if(pegIndexes[p1] > 77 && pegIndexes[p1] < 82){
+            peg1.setY(peg1.getY() - 10);
+            peg2.setY(peg2.getY() + 10);
+            peg1.setFillPatternOffset([-20, -30]);
+            peg2.setFillPatternOffset([-20, -10]);
+        }
+        
+    }else if(pegIndexes[p1] - pegIndexes[p2] == 1){
+        if(pegIndexes[p1] <= 36 || pegIndexes[p1] >= 82){
+            peg1.setX(peg1.getX() + 10);
+            peg2.setX(peg2.getX() - 10);
+            peg1.setFillPatternOffset([-10, -20]);
+            peg2.setFillPatternOffset([-30, -20]);
+        }else if(pegIndexes[p1] > 36 && pegIndexes[p1] < 42){
+            peg1.setY(peg1.getY() + 10);
+            peg2.setY(peg2.getY() - 10);
+            peg1.setFillPatternOffset([-20, -10]);
+            peg2.setFillPatternOffset([-20, -30]);
+        }else if(pegIndexes[p1] >= 42 && pegIndexes[p1] <= 77){
+            peg1.setX(peg1.getX() - 10);
+            peg2.setX(peg2.getX() + 10);
+            peg1.setFillPatternOffset([-30, -20]);
+            peg2.setFillPatternOffset([-10, -20]);
+        }else if(pegIndexes[p1] > 77 && pegIndexes[p1] < 82){
+            peg1.setY(peg1.getY() + 10);
+            peg2.setY(peg2.getY() - 10);
+            peg1.setFillPatternOffset([-20, -10]);
+            peg2.setFillPatternOffset([-20, -30]);
+        }
+        
+    }
 }
 
 function drawPegs(images) {

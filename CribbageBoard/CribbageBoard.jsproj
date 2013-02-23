@@ -47,15 +47,16 @@
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <TargetPlatformVersion>8.0</TargetPlatformVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <PackageCertificateKeyFile>CribbageBoard_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>CribbageBoard_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <PackageCertificateThumbprint>FF321338B20F81F7AABB87E1F7CF453963BE3D9A</PackageCertificateThumbprint>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="CribbageBoard_StoreKey.pfx" />
     <Content Include="css\default.css" />
     <Content Include="default.html" />
-    <Content Include="images\circle.png" />
     <Content Include="images\cribbage.png" />
-    <Content Include="images\felt.png" />
+    <Content Include="images\felt.jpg" />
     <Content Include="images\logo.png" />
     <Content Include="images\pegBlue.png" />
     <Content Include="images\pegGreen.png" />
@@ -66,9 +67,11 @@
     <AppxManifest Include="package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="images\widelogo.png" />
     <Content Include="js\default.js" />
     <Content Include="js\kinetic-v4.3.1.min.js" />
     <Content Include="js\utils.js" />
+    <None Include="Package.StoreAssociation.xml" />
     <None Include="CribbageBoard_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

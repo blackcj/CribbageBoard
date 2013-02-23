@@ -3,7 +3,7 @@
 (function () {
     "use strict";
     
-
+    
     WinJS.Binding.optimizeBindingReferences = true;
 
     var app = WinJS.Application;
@@ -22,6 +22,7 @@
             init();
         } else {
             // Add backup if load happens in the wrong order.
+            isReady = true;
         }
     });
 
