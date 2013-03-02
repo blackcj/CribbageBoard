@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="BlacktopInteractiveLLC.CribbageBoard" Version="1.0.0.2" Publisher="CN=A84F0CFD-A995-4F14-9707-1FE5D9ED33D6" />
+  <Identity Name="BlacktopInteractiveLLC.CribbageBoard" Version="1.0.0.5" Publisher="CN=A84F0CFD-A995-4F14-9707-1FE5D9ED33D6" />
   <Properties>
     <DisplayName>Cribbage Board</DisplayName>
     <PublisherDisplayName>Blacktop Interactive, LLC</PublisherDisplayName>

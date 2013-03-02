@@ -2,7 +2,8 @@
 // http://go.microsoft.com/fwlink/?LinkId=232508
 (function () {
     "use strict";
-    
+
+
     
     WinJS.Binding.optimizeBindingReferences = true;
 
@@ -57,4 +58,6 @@
     };
 
     app.start();
+
+    
 })();
