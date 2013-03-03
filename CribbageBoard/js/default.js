@@ -12,7 +12,7 @@
     var display = Windows.Graphics.Display;
     app.addEventListener('activated', function(evt) {
         var appState = activation.ApplicationExecutionState;
-        console.log(evt.detail.previousExecutionState);
+        //console.log(evt.detail.previousExecutionState);
         if(evt.detail.previousExecutionState == appState.notRunning || evt.detail.previousExecutionState == appState.closedByUser) {
             pegIndexes = [0,1,0,1,0,1];
         }
@@ -22,13 +22,20 @@
         if (isLoaded) {
             init();
         } else {
-            // Add backup if load happens in the wrong order.
             isReady = true;
         }
+        
     });
 
-    app.addEventListener('checkpoint', function() {
+    app.addEventListener('suspended', function () {
+        //console.log('SUSPENDED');
+    });
+
+
+    app.addEventListener('checkpoint', function () {
+        //console.log('CHECKPOINT');
         app.sessionState.pegIndexes = pegIndexes;
+        
     });
 
 

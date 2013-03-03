@@ -16,6 +16,7 @@
     <script>
 
         var isReady = false;
+        var hasPegs = false;
     </script>
 
     <link href="/css/default.css" rel="stylesheet" />
@@ -103,8 +104,10 @@
          * When the screen size changes, update the layout of the app.
          *
          */
-		window.onresize = function(event) {
-		    init();
+		window.onresize = function (event) {
+		    if (isReady) {
+		        init();
+		    }
 		}
 
 		function loadComplete() {
@@ -113,6 +116,9 @@
 		        init();
 		    }
 		}
+		var redScore = 0;
+		var greenScore = 0;
+		var blueScore = 0;
 
         /**
          * Minimum size of the stage for a Windows 8 tablet app is 1024x768.
@@ -179,7 +185,10 @@
 		        stage.add(pegBlueLayer);
 		        messageLayer.add(simpleText);
 		        stage.add(messageLayer);
-		    }
+             }
+             isReady = true;
+             isLoaded = true;
+             
 		}
 
 		function loadImages(sources, callback) {
@@ -199,6 +208,7 @@
 		        };
 		        images[src].src = sources[src];
 		    }
+		    
 		}
 
 		function writeMessage(messageLayer, message, xPos, yPos, color) {
@@ -234,16 +244,16 @@
 				blueIndex ++;
 			  }
 			  break;
-		    case pegYellowOne:
-		        if (blueIndex == pegIndexes[3]) {
-		            blueIndex++;
-		        }
+		      case pegYellowOne:
+		          if (blueIndex == pegIndexes[3]) {
+		              blueIndex++;
+		          }
+		          break;
 		    case pegYellowTwo:
 		        if (blueIndex == pegIndexes[2]) {
 		            blueIndex++;
 		        }
 		        break;
-
 			case pegRedOne:
 			  if(blueIndex == pegIndexes[5]){
 				blueIndex ++;
@@ -271,30 +281,108 @@
 		    updatePegs();
 		}
 
+		function addBlue() {
+		    if (blueScore < 121) {
+		        undoData.push(pegIndexes.slice(0));
+		        document.getElementById("undoButton").disabled = false;
+		        if (pegIndexes[0] > pegIndexes[1]) {
+		            pegIndexes[0]++;
+		        } else {
+		            pegIndexes[1]++;
+		        }
+		        updateScores();
+		    }
+		}
+
+		function addGreen() {
+		    if (greenScore < 121) {
+		        undoData.push(pegIndexes.slice(0));
+		        document.getElementById("undoButton").disabled = false;
+		        if (pegIndexes[2] > pegIndexes[3]) {
+		            pegIndexes[2]++;
+		        } else {
+		            pegIndexes[3]++;
+		        }
+		        updateScores();
+		    }
+		}
+
+		function addRed() {
+		    if (redScore < 121) {
+		        undoData.push(pegIndexes.slice(0));
+		        document.getElementById("undoButton").disabled = false;
+		        if (pegIndexes[4] > pegIndexes[5]) {
+		            pegIndexes[4]++;
+		        } else {
+		            pegIndexes[5]++;
+		        }
+		        updateScores();
+		    }
+		}
+
+		function updateScores() {
+		    if (pegIndexes[0] > pegIndexes[1]) {
+		        blueScore = pegIndexes[0] -1;
+		    } else {
+		        blueScore = pegIndexes[1] -1;
+		    }
+		    document.getElementById("blueScoreDiv").innerHTML = blueScore;
+		    if (pegIndexes[2] > pegIndexes[3]) {
+		        greenScore = pegIndexes[2] -1;
+		    } else {
+		        greenScore = pegIndexes[3] -1;
+		    }
+		    document.getElementById("greenScoreDiv").innerHTML = greenScore;
+		    if (pegIndexes[4] > pegIndexes[5]) {
+		        redScore = pegIndexes[4] -1;
+		    } else {
+		        redScore = pegIndexes[5] -1;
+		    }
+		    document.getElementById("redScoreDiv").innerHTML = redScore;
+
+		    if (blueScore > redScore && blueScore > greenScore) {
+		        setColors(pegOneColor);
+		    } else if (greenScore > redScore) {
+		        setColors(pegTwoColor);
+		    } else {
+		        setColors(pegThreeColor);
+		    }
+		}
+
+		function setColors(color) {
+		    document.getElementById("snapView").style.backgroundColor = color;
+		    document.getElementById("addRed").style.color = color;
+		    document.getElementById("addGreen").style.color = color;
+		    document.getElementById("addBlue").style.color = color;
+		}
+
 		function updatePegs() {
-		    console.log(pegIndexes);
-		    pegBlueOne.setX(rowOne[pegIndexes[0]].x);
-		    pegBlueOne.setY(rowOne[pegIndexes[0]].y);
-		    pegBlueTwo.setX(rowOne[pegIndexes[1]].x);
-		    pegBlueTwo.setY(rowOne[pegIndexes[1]].y);
+		    if (hasPegs) {
+		        updateScores();
 
-		    pegYellowOne.setX(rowTwo[pegIndexes[2]].x);
-		    pegYellowOne.setY(rowTwo[pegIndexes[2]].y);
-		    pegYellowTwo.setX(rowTwo[pegIndexes[3]].x);
-		    pegYellowTwo.setY(rowTwo[pegIndexes[3]].y);
+		        pegBlueOne.setX(rowOne[pegIndexes[0]].x);
+		        pegBlueOne.setY(rowOne[pegIndexes[0]].y);
+		        pegBlueTwo.setX(rowOne[pegIndexes[1]].x);
+		        pegBlueTwo.setY(rowOne[pegIndexes[1]].y);
 
-		    pegRedOne.setX(rowThree[pegIndexes[4]].x);
-		    pegRedOne.setY(rowThree[pegIndexes[4]].y);
-		    pegRedTwo.setX(rowThree[pegIndexes[5]].x);
-		    pegRedTwo.setY(rowThree[pegIndexes[5]].y);
+		        pegYellowOne.setX(rowTwo[pegIndexes[2]].x);
+		        pegYellowOne.setY(rowTwo[pegIndexes[2]].y);
+		        pegYellowTwo.setX(rowTwo[pegIndexes[3]].x);
+		        pegYellowTwo.setY(rowTwo[pegIndexes[3]].y);
 
-		    normalizePegs(4, 5, pegRedOne, pegRedTwo);
-		    normalizePegs(0, 1, pegBlueOne, pegBlueTwo);
-		    normalizePegs(2, 3, pegYellowOne, pegYellowTwo);
+		        pegRedOne.setX(rowThree[pegIndexes[4]].x);
+		        pegRedOne.setY(rowThree[pegIndexes[4]].y);
+		        pegRedTwo.setX(rowThree[pegIndexes[5]].x);
+		        pegRedTwo.setY(rowThree[pegIndexes[5]].y);
 
-		    pegBlueLayer.draw();
-		    pegYellowLayer.draw();
-		    pegRedLayer.draw();
+		        normalizePegs(4, 5, pegRedOne, pegRedTwo);
+		        normalizePegs(0, 1, pegBlueOne, pegBlueTwo);
+		        normalizePegs(2, 3, pegYellowOne, pegYellowTwo);
+
+		        pegBlueLayer.draw();
+		        pegYellowLayer.draw();
+		        pegRedLayer.draw();
+		    }
 		}
 
 		function undo() {
@@ -322,12 +410,53 @@
 		    if (Windows.UI.ViewManagement.ApplicationView.value == Windows.UI.ViewManagement.ApplicationViewState.snapped) {
 		        document.getElementById("container").style.display = "none";
 		        document.getElementById("snapView").style.display = "block";
-
+		        updateScores();
 		    } else {
 		        document.getElementById("container").style.display = "block";
 		        document.getElementById("snapView").style.display = "none";
+		        updatePegs();
 		    }
+		    messageLayer.hide();
 		}
+
+		document.addEventListener("visibilitychange", function () {
+		    var hasNote = false;
+		    var notifications = Windows.UI.Notifications;
+		    if (redScore > 0 || blueScore > 0 || greenScore > 0) {
+		        if (redScore != 121 && blueScore != 121 && greenScore != 121) {
+		            console.log('SUSPENDED');
+
+		            var template = notifications.TileTemplateType.tileWideImageAndText01;
+		            var tileXml = notifications.TileUpdateManager.getTemplateContent(template);
+
+		            var tileTextAttributes = tileXml.getElementsByTagName("text");
+		            tileTextAttributes[0].appendChild(tileXml.createTextNode("Resume your game\nRed: " + redScore + "  Green: " + greenScore + "  Blue: " + blueScore));
+
+		            var tileImageAttributes = tileXml.getElementsByTagName("image");
+		            tileImageAttributes[0].setAttribute("src", "ms-appx:///images/widelogo.png");
+		            tileImageAttributes[0].setAttribute("alt", "red graphic");
+
+		            var squareTemplate = notifications.TileTemplateType.tileSquareText04;
+		            var squareTileXml = notifications.TileUpdateManager.getTemplateContent(squareTemplate);
+		            var squareTileTextAttributes = squareTileXml.getElementsByTagName("text");
+		            squareTileTextAttributes[0].appendChild(squareTileXml.createTextNode("Resume game\nRed: " + redScore + " \nGreen: " + greenScore + " \nBlue: " + blueScore));
+
+		            var node = tileXml.importNode(squareTileXml.getElementsByTagName("binding").item(0), true);
+		            tileXml.getElementsByTagName("visual").item(0).appendChild(node);
+
+		            var tileNotification = new notifications.TileNotification(tileXml);
+
+		            var currentTime = new Date();
+		            tileNotification.expirationTime = new Date(currentTime.getTime() + 600 * 6000);
+
+		            notifications.TileUpdateManager.createTileUpdaterForApplication().update(tileNotification);
+		            hasNote = true;
+		        }
+		    }
+		    if (!hasNote) {
+		        notifications.TileUpdateManager.createTileUpdaterForApplication().clear();
+		    }
+		});
 
 	</script>
 </head>
@@ -339,17 +468,17 @@
         <button onclick="undo();" id="undoButton" disabled="disabled"
             data-win-control="WinJS.UI.AppBarCommand" 
             data-win-options="{id:'cmdHelp',label:'Undo',icon:'undo',
-                section:'global',tooltip:'Delete item'}">
+                section:'global',tooltip:'Undo your last move'}">
         </button>
         <button onclick="showConfirmFlyout()" id="cmdHelpId"
             data-win-control="WinJS.UI.AppBarCommand" 
             data-win-options="{id:'cmdHelp',label:'Help',icon:'help',
-                section:'global',tooltip:'Delete item'}">
+                section:'global',tooltip:'Open quick rules'}">
         </button>
         <button onclick="resetGame();"
             data-win-control="WinJS.UI.AppBarCommand" 
             data-win-options="{id:'cmdReset',label:'New Game',icon:'page',
-                section:'selection',tooltip:'Reset'}">
+                section:'selection',tooltip:'Start a new game'}">
         </button>
     </div>
     <!-- ENDTEMPLATE -->
@@ -370,11 +499,11 @@
             <br />
             <h3>The Points</h3>
             <ul style="margin-left:20px">
-                <li><strong>Fifteen-twos:</strong> Two points for each separate combination of two or more cards totalling exactly 15.</li>
+                <li><strong>Fifteen-twos:</strong> Two points for each separate combination of two or more cards totalings exactly 15.</li>
                 <li><strong>Runs:</strong> Three points for a run of three consecutive cards (regardless of suit), four points for a run of four and five points for a run of five.</li>
                 <li><strong>Pairs:</strong> Two points for a pair of cards. Six points for three cards of a kind. Twelve points for four of a kind.</li>
                 <li><strong>Flush:</strong> Four points for a flush, where all cards in your hand are the same suite. Five points for a five card flush.</li>
-                <li><strong>Nobs:</strong> One piont for holding the Jack of the same suite as the "starter" card.</li>
+                <li><strong>Nobs:</strong> One point for holding the Jack of the same suite as the "starter" card.</li>
             </ul>
         </div>
     </div>
@@ -382,8 +511,28 @@
     <div id="container" style></div>
 
     <div id="snapView" style="width:100%;height:100%;background-color:#9C0501;margin-top:-20px;padding-top:0px;display:none">
-        <img src="images/widelogo.png" style="margin-top:-20px" />
+        <img src="images/widelogo.png" style="margin-bottom:20px;margin-top:10px" />
+        <div id="addBlue" class="add" style="float:right" onclick="addBlue();">
+            +
+        </div>
+        <div id="blueScoreDiv" class="score">
+
+        </div>
+        <div  id="addGreen" class="add" style="float:right" onclick="addGreen();">
+            +
+        </div>
+        <div id="greenScoreDiv" class="score">
+
+        </div>
+        <div  id="addRed" class="add" style="float:right" onclick="addRed();">
+            +
+        </div>
+        <div id="redScoreDiv" class="score">
+
+        </div>
+        <img src="images/logo.png" style="margin-left:90px;margin-top:20px" />
     </div>
+
 </body>
 
 </html>

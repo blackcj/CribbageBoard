@@ -343,5 +343,10 @@
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames />
-  <PackageInfoList LandingUrl="https://appdev.microsoft.com:443/StorePortals/Developer/Catalog/ReleaseAnchor/1a5f72aa-aaaa-4660-abfc-7ab99bec7af0" />
+  <PackageInfoList LandingUrl="https://appdev.microsoft.com:443/StorePortals/Developer/Catalog/ReleaseAnchor/1a5f72aa-aaaa-4660-abfc-7ab99bec7af0">
+    <PackageInfo>
+      <PackageArchitecture>neutral</PackageArchitecture>
+      <PackageMaxArchitectureVersion>1.0.0.7</PackageMaxArchitectureVersion>
+    </PackageInfo>
+  </PackageInfoList>
 </StoreAssociation>

@@ -502,7 +502,7 @@ function drawPeg(color, name, image) {
             normalizePegs(2, 3, pegYellowOne, pegYellowTwo);
             pegYellowLayer.draw();
         }
-        
+        updateScores();
         messageLayer.hide();
         lineLayer.draw();
 
@@ -696,7 +696,7 @@ function drawPegs(images) {
 
     pegRedTwo = drawPeg(pegThreeColor, 'pegRedTwo', images.redPegImage);
     pegRedLayer.add(pegRedTwo);
-    
+    hasPegs = true;
     updatePegs();
     
 }
