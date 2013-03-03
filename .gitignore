@@ -39,3 +39,4 @@ Thumbs.db
 *.pfx
 bin/
 bld/
+AppPackages/
