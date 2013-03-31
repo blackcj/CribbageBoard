@@ -1,5 +1,5 @@
-CribbageBoard
-=============
+Cribbage Board
+==============
 
 Windows 8 JavaScript Application
 
