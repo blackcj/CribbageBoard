@@ -70,6 +70,8 @@
     <Content Include="images\widelogo.png" />
     <Content Include="js\default.js" />
     <Content Include="js\kinetic.min.js" />
+    <Content Include="js\mathfunctions.js" />
+    <Content Include="js\debug.js" />
     <Content Include="js\underscore.min.js" />
     <Content Include="js\utils.js" />
     <None Include="Package.StoreAssociation.xml" />

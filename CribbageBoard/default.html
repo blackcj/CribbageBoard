@@ -22,15 +22,17 @@
     <script src="/js/default.js"></script>
     <script src="/js/underscore.min.js"></script>
     <script src="/js/kinetic.min.js"> </script>
+    <script src="/js/mathfunctions.js"></script>
     <script src="/js/utils.js"></script>
+
+    <!-- Used for debugging -->
+    <!-- <script src="/js/debug.js"></script> -->
 
     <script>
         var isLoaded = false;
         var undoData = new Array();
         var backgroundColor = '#1a1a1a';
-		var rowOne = new Array();
-    	var rowTwo = new Array();
-    	var rowThree = new Array();
+
 
         // Current scores for each color
     	var redScore = 0;
@@ -39,75 +41,9 @@
 
         // Current position for each peg
 		var pegIndexes = [0, 1, 0, 1, 0, 1];
-		
-        // Peg variables
-		var pegBlueOne;
-		var pegBlueTwo;
-		var pegYellowOne;
-		var pegYellowTwo;
-		var pegRedOne;
-		var pegRedTwo;
-
-        // Kenetic JS layers
-		var stage;
-		var pegRedLayer = new Kinetic.Layer();
-		var pegYellowLayer = new Kinetic.Layer();
-		var pegBlueLayer = new Kinetic.Layer();
-		var messageLayer = new Kinetic.Layer();
-		var lineLayer = new Kinetic.Layer();
-        
-        // Peg colors
-		var pegOneColor = '#2572EB';
-		var pegTwoColor = '#AED136';
-		var pegThreeColor = '#AD103C';
+       
 
 		buildArrays();
-
-        /* 
-            Kenetic JS Setup
-        */
-		var simpleText = new Kinetic.Text({
-		    x: 0,
-		    y: 0,
-		    text: '',
-		    fontSize: 48,
-            fontSyle: 'bold',
-		    fontFamily: 'Calibri',
-		    fill: 'green'/*,
-		    shadowColor: 'black',
-		    shadowBlur: 5*/
-		});
-
-		var redLine = new Kinetic.Line({
-		    points: [0, 0, 0, 0],
-		    stroke: pegThreeColor,
-		    strokeWidth: 5,
-		    opacity: 1,
-		    lineCap: 'round',
-		    lineJoin: 'round'
-		});
-
-		var yellowLine = new Kinetic.Line({
-		    points: [0, 0, 0, 0],
-		    stroke: pegTwoColor,
-		    strokeWidth: 5,
-		    opacity: 1,
-		    lineCap: 'round',
-		    lineJoin: 'round'
-		});
-
-        /**
-         * Used for displaying the blue line in the app.
-         *
-         */
-		var blueLine = new Kinetic.Line({
-		    points: [0, 0, 0, 0],
-		    stroke: pegOneColor,
-		    strokeWidth: 5,
-		    opacity: 1,
-		    lineCap: 'round',
-		    lineJoin: 'round'
-		});
 
 		function loadComplete() {
 		    isLoaded = true;
@@ -172,7 +108,6 @@
                 // background image
 		        imageObj.src = 'images/cribbage.png';
 
-		        //showDots(); // Used for debugging
 		        lineLayer.add(redLine);
 		        lineLayer.add(blueLine);
 		        lineLayer.add(yellowLine);
@@ -214,6 +149,7 @@
 		    //simpleText.setY(yPos - 100);
 		    simpleText.setFill(color);
 		    messageLayer.draw();
+		
 		}
 
 		function placePeg(peg, row)
@@ -351,35 +287,6 @@
 		    document.getElementById("addRed").style.color = color;
 		    document.getElementById("addGreen").style.color = color;
 		    document.getElementById("addBlue").style.color = color;
-		}
-
-		function updatePegs() {
-		    if (hasPegs) {
-		        updateScores();
-
-		        pegBlueOne.setX(rowOne[pegIndexes[0]].x);
-		        pegBlueOne.setY(rowOne[pegIndexes[0]].y);
-		        pegBlueTwo.setX(rowOne[pegIndexes[1]].x);
-		        pegBlueTwo.setY(rowOne[pegIndexes[1]].y);
-
-		        pegYellowOne.setX(rowTwo[pegIndexes[2]].x);
-		        pegYellowOne.setY(rowTwo[pegIndexes[2]].y);
-		        pegYellowTwo.setX(rowTwo[pegIndexes[3]].x);
-		        pegYellowTwo.setY(rowTwo[pegIndexes[3]].y);
-
-		        pegRedOne.setX(rowThree[pegIndexes[4]].x);
-		        pegRedOne.setY(rowThree[pegIndexes[4]].y);
-		        pegRedTwo.setX(rowThree[pegIndexes[5]].x);
-		        pegRedTwo.setY(rowThree[pegIndexes[5]].y);
-
-		        normalizePegs(4, 5, pegRedOne, pegRedTwo);
-		        normalizePegs(0, 1, pegBlueOne, pegBlueTwo);
-		        normalizePegs(2, 3, pegYellowOne, pegYellowTwo);
-
-		        pegBlueLayer.draw();
-		        pegYellowLayer.draw();
-		        pegRedLayer.draw();
-		    }
 		}
 
         // Undo the last move
@@ -553,6 +460,7 @@
         <img src="images/logo.png" style="margin-left:90px;margin-top:20px" />
     </div>
     <!-- END Snap View -->
+
 </body>
 
 </html>

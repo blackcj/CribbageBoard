@@ -1,255 +1,99 @@
-﻿var rowOne = new Array();
+﻿// Peg snap indexes
+var rowOne = new Array();
 var rowTwo = new Array();
 var rowThree = new Array();
 
+// Peg variables
+var pegBlueOne;
+var pegBlueTwo;
+var pegYellowOne;
+var pegYellowTwo;
+var pegRedOne;
+var pegRedTwo;
+
+// Kenetic JS layers
+var stage;
+var pegRedLayer = new Kinetic.Layer();
+var pegYellowLayer = new Kinetic.Layer();
+var pegBlueLayer = new Kinetic.Layer();
+var messageLayer = new Kinetic.Layer();
+var lineLayer = new Kinetic.Layer();
+
+// Peg colors
+var pegOneColor = '#2572EB';
+var pegTwoColor = '#AED136';
+var pegThreeColor = '#AD103C';
+
+/**
+* Class used for Point
+*
+*/
 function Point(x, y) {
     this.x = x || 0;
     this.y = y || 0;
 };
 
+/* 
+    Kenetic JS Setup
+*/
+var simpleText = new Kinetic.Text({
+    x: 0,
+    y: 0,
+    text: '',
+    fontSize: 48,
+    fontSyle: 'bold',
+    fontFamily: 'Calibri',
+    fill: 'green'/*,
+		    shadowColor: 'black',
+		    shadowBlur: 5*/
+});
 
 /**
- * Complex trig used to determine the midpoint of a parallel line. Used to snap 
- * the walls during a move. You really don't want to edit this function...
- *  
- * http://www.intmath.com/Plane-analytic-geometry/Perpendicular-distance-point-line.php
- * 
- * @param startPoint
- * @param endPoint
- * @param nextPoint
- * @param angle
- * @return 
- * 
+ * Used for displaying the red line in the app.
+ *
  */
-function getRightAnglePoint(startPoint, endPoint, nextPoint, angle)
-{
-    angle = Math.round(angle);
-    var lineLength = getDistanceGivenPoints(startPoint, endPoint);
-    lineLength = lineLength / 2;
-    var midPoint = getMidPoint(startPoint, endPoint);
-    var distance = getDistanceGivenLine(startPoint, endPoint, nextPoint);
-    distance = Math.floor(distance / 10) * 10;
-    /*
-    * Angle between the line and the shortest distance to that line given a point.     
-    */
-    //var tempAngle:Number = Math.atan(distance / lineLength)/(Math.PI / 180);
-      
-    /*
-    * Normalize the sign. Account for edge cases (90 / 270)    
-    */      
-    if(angle > 90 && angle < 270){
-        distance = -distance;
-    }else  if(angle == 90/* angle >= 80 && angle <= 100 */){
-        distance = startPoint.x - nextPoint.x;
-    }else if( angle == 270/* angle >= 260 && angle <= 280 */){
-        distance = startPoint.x + nextPoint.x;
-    }
-    //var d2:Number = lineLength * Math.tan((angle % 90 - tempAngle) / (180 / Math.PI));
-    var corner = getPointGivenDist(distance, (angle + 90) % 360, midPoint);
-    return corner;
-      
-}
-    
-/**
-* Returns the closest distance from a point to a line. Start and end points are used
-* to calculate the line in y = m * x + b format. The distance between a point and a
-* line in slope intecept format is: |y1 - m * x1 - b| / sqrt(m^2 + 1). Where 
-* (y1, x1) is a point not on the line. 
-* 
-* DOES NOT WORK FOR LINES AT 90 or 270 DEGREES. (You will need separate use cases 
-* for these values).
-* 
-* http://math.ucsd.edu/~wgarner/math4c/derivations/distance/distptline.htm
-* 
-* @param startPoint
-* @param endPoint
-* @param nextPoint
-* 
-*/   
-function getDistanceGivenLine(startPoint, endPoint, nextPoint)
-{
-    // Slope of the line
-    var m = (startPoint.y -  endPoint.y) / (startPoint.x -  endPoint.x);
-      
-    // Y-Intercept
-    var b = startPoint.y - (m * startPoint.x);
-      
-    return (nextPoint.y - m*nextPoint.x - b) / Math.sqrt(Math.pow(m, 2)+1);
-}
-    
-function getXGivenY(pointY, slope, b)
-{
-    return (pointY - b) / slope;
-}
-    
-function getYGivenX(pointX, slope, b)
-{
-    return (slope * pointX) + b;
-}
-    
-function getRecipricolSlope(startPoint, endPoint)
-{
-    var top = endPoint.y - startPoint.y;
-    var bottom = endPoint.x - startPoint.x;
-      
-    return -(bottom/top);
-}
-    
-function getB(slope, point)
-{
-    return point.y - (slope * point.x);
-}
-    
-function getMidPoint(startPoint, endPoint)
-{
-    return new Point((endPoint.x + startPoint.x) / 2, (endPoint.y + startPoint.y) / 2);
-}
-    
-/**
- * Distance formula: sqrt((x2 - x1)^2 + (y2 - y1)^2)
- *  
- * @param startPoint
- * @param endPoint
- * @return 
- * 
- */
-function getDistanceGivenPoints(startPoint, endPoint)
-{
-    return Math.sqrt(Math.pow((endPoint.x - startPoint.x), 2) + Math.pow((endPoint.y - startPoint.y), 2));      
-}
-    
-/**
-* Returns a point that is the given distance / angle away from the start point.
-*  
-* @param dist
-* @param angle
-* @param startPt
-* @return 
-* 
-*/
-function getPointGivenDist(dist, angle, startPt)
-{
-    var result = new Point();
-    //var radAngle:Number = angle / (180/ Math.PI);
-    if(angle <= 90){
-        result.x = startPt.x + Math.cos(angle / (180/ Math.PI)) * dist;
-        result.y = startPt.y + Math.sin(angle / (180/ Math.PI)) * dist;
-    }else if(angle <= 180){
-        result.x = startPt.x - Math.sin((angle - 90) / (180/ Math.PI)) * dist;
-        result.y = startPt.y + Math.cos((angle - 90) / (180/ Math.PI)) * dist;
-    }else if(angle <= 270){
-        result.x = startPt.x - Math.cos((angle - 180) / (180/ Math.PI)) * dist;
-        result.y = startPt.y - Math.sin((angle - 180) / (180/ Math.PI)) * dist;
-    }else{
-        result.x = startPt.x + Math.sin((angle - 270) / (180/ Math.PI)) * dist;
-        result.y = startPt.y - Math.cos((angle - 270) / (180/ Math.PI)) * dist;
-    }
-    return result;            
-}
-    
-/**
-* Given a point it returns a 'snap point' which is snapped to the angle passed in.
-* 
-* This could be re-done using polar coordinates to make it more customizable. Right
-* now the angels are hard coded.
-*  
-* @param startPoint
-* @param endPoint
-* @param angle
-* @return 
-* 
-*/
-function getNormalizedPoint(startPoint, endPoint, angle)
-{
-    var result = new Point();
-    var distance = Math.sqrt(Math.pow((endPoint.x - startPoint.x), 2) + Math.pow((endPoint.y - startPoint.y), 2));
-    distance = Math.round(distance / 10) * 10
-    var adj = distance * Math.sin(45 / (180 / Math.PI));
-    if(angle == 0){
-        result = new Point(startPoint.x + distance, startPoint.y);
-    }else if(angle == 90){
-        result = new Point(startPoint.x, startPoint.y + distance);
-    }else if(angle == 180){
-        result = new Point(startPoint.x-distance, startPoint.y);
-    }else if(angle == 270){
-        result = new Point(startPoint.x, startPoint.y-distance);
-    }else if(angle == 45){
-        result = new Point(startPoint.x + adj, startPoint.y + adj);
-    }else if(angle == 135){
-        result = new Point(startPoint.x-adj, startPoint.y + adj);
-    }else if(angle == 225){
-        result = new Point(startPoint.x-adj, startPoint.y-adj);
-    }else{
-        result = new Point(startPoint.x+adj, startPoint.y-adj);
-    }
-    return result;
-}
-    
-/**
-* Hard coded 'snap angles' that are feed into getNormalizedPoint
-* 
-* This could be re-done using polar coordinates to make it more customizable. Right
-* now the angels are hard coded.
-* 
-* @param value
-* @return 
-* 
-*/
-function normalizeAngle(value)
-{
-    var result = 0;
-    if(value >= 22.5 && value < 67.5){
-        result = 45;
-    }else if(value >= 67.5 && value < 112.5){
-        result = 90;
-    }else if(value >= 112.5 && value < 157.5){
-        result = 135;
-    }else if(value >= 157.5 && value < 202.5){
-        result = 180;
-    }else if(value >= 202.5 && value < 247.5){
-        result = 225;
-    }else if(value >= 247.5 && value < 292.5){
-        result = 270;
-    }else if(value >= 292.5 && value < 337.5){
-        result = 315;
-    }
-    return result;
-}
-    
-/**
-* Trigonomitry. Returns an angle give the adj and opp. Needs four use
-* cases since the adj / opp will very depending on which quadrant you are in.
-*  
-* http://en.wikipedia.org/wiki/Triangle
-* 
-* @param adj
-* @param opp
-* @return 
-* 
-*/
-function getAngle(adj, opp)
-{
-    var result = 0;
-    if(adj <= 0 && opp <= 0){
-        result = 180 + ( Math.atan( Math.abs(adj) / Math.abs(opp) ) /(Math.PI/180) )
-    }else if(adj >= 0 && opp <= 0){
-        result = 90 + ( Math.atan( Math.abs(opp) / Math.abs(adj) ) /(Math.PI/180) )
-    }else if(adj <= 0 && opp >= 0){
-        result = 270 + ( Math.atan( Math.abs(opp) / Math.abs(adj) ) /(Math.PI/180) )
-    }else{
-        result = ( Math.atan( Math.abs(adj) / Math.abs(opp) ) /(Math.PI/180) )
-    }
-    return result;      
-}
+var redLine = new Kinetic.Line({
+    points: [0, 0, 0, 0],
+    stroke: pegThreeColor,
+    strokeWidth: 5,
+    opacity: 1,
+    lineCap: 'round',
+    lineJoin: 'round'
+});
 
-var xPos = 124;
-var yPos = 153;
+/**
+ * Used for displaying the yellow line in the app.
+ *
+ */
+var yellowLine = new Kinetic.Line({
+    points: [0, 0, 0, 0],
+    stroke: pegTwoColor,
+    strokeWidth: 5,
+    opacity: 1,
+    lineCap: 'round',
+    lineJoin: 'round'
+});
+
+/**
+ * Used for displaying the blue line in the app.
+ *
+ */
+var blueLine = new Kinetic.Line({
+    points: [0, 0, 0, 0],
+    stroke: pegOneColor,
+    strokeWidth: 5,
+    opacity: 1,
+    lineCap: 'round',
+    lineJoin: 'round'
+});
 
 /**
 * Build arrays of points to use for snaping the pegs into position.
 *
 */
 function buildArrays() {
+    var xPos = 124;
+    var yPos = 153;
 
     rowOne.push(new Point(59, 153));
     rowOne.push(new Point(76, 153));
@@ -346,62 +190,14 @@ function buildArrays() {
     rowThree.push(new Point(970.5, 561.5));
 }
 
-/**
-* Used for debugging. Displays a dot at each one of the points in the row arrays.
-*
-*/
-var dotColor = '#666666';
-function showDots() {
-    
-
-    var layer = new Kinetic.Layer();
-
-    for (var p = 2; p < rowOne.length; p++) {
-        var rect = new Kinetic.Rect({
-            x: rowOne[p].x - 5,
-            y: rowOne[p].y - 5,
-            width: 10,
-            height: 10,
-            fill: dotColor
-        });
-
-        // add the shape to the layer
-        layer.add(rect);
-    }
-
-    for (var q = 2; q < rowTwo.length; q++) {
-        var rect = new Kinetic.Rect({
-            x: rowTwo[q].x - 5,
-            y: rowTwo[q].y - 5,
-            width: 10,
-            height: 10,
-            fill: dotColor
-        });
-
-        // add the shape to the layer
-        layer.add(rect);
-    }
-
-    for (var w = 2; w < rowThree.length; w++) {
-        var rect = new Kinetic.Rect({
-            x: rowThree[w].x - 5,
-            y: rowThree[w].y - 5,
-            width: 10,
-            height: 10,
-            fill: dotColor
-        });
-
-        // add the shape to the layer
-        layer.add(rect);
-    }
-    // add the layer to the stage
-    stage.add(layer);
-}
 var index = 0;
 var closest = 500;
 var pegPoint;
 /**
 * Create peg and add event listeners.
+*
+* @param peg 
+* @param row 
 *
 */
 function getPegIndex(peg, row) {
@@ -425,6 +221,11 @@ function getPegIndex(peg, row) {
 /**
  * The guide shows the number of pegs as a user drags. This function sets the color, position and text of the guide.
  *
+ * @param peg 
+ * @param i 
+ * @param tempIndex 
+ * @param color 
+ *
  */
 function updateGuide(peg, i, tempIndex, color) {
     if (tempIndex > pegIndexes[i]) {
@@ -444,6 +245,10 @@ var points;
 var currentPeg;
 /**
  * Create peg and add event listeners.
+ *
+ * @param color 
+ * @param name 
+ * @param image 
  *
  */
 function drawPeg(color, name, image) {
@@ -519,6 +324,12 @@ function drawPeg(color, name, image) {
     return circle;
 }
 
+/**
+* Peg on move handler. This function is throttled using underscore JS to improve performance.
+*  
+* @param pos 
+* 
+*/
 function onPegMove(pos) {
     points = new Array();
     if (pos.shape.attrs.name == 'pegRedOne' || pos.shape.attrs.name == 'pegRedTwo') {
@@ -687,6 +498,45 @@ function normalizePegs(p1, p2, peg1, peg2)
     }
 }
 
+/**
+* Updates pegs to match the current indexes. Used when restoring a game state and during undo.
+* 
+*/
+function updatePegs() {
+    if (hasPegs) {
+        updateScores();
+
+        pegBlueOne.setX(rowOne[pegIndexes[0]].x);
+        pegBlueOne.setY(rowOne[pegIndexes[0]].y);
+        pegBlueTwo.setX(rowOne[pegIndexes[1]].x);
+        pegBlueTwo.setY(rowOne[pegIndexes[1]].y);
+
+        pegYellowOne.setX(rowTwo[pegIndexes[2]].x);
+        pegYellowOne.setY(rowTwo[pegIndexes[2]].y);
+        pegYellowTwo.setX(rowTwo[pegIndexes[3]].x);
+        pegYellowTwo.setY(rowTwo[pegIndexes[3]].y);
+
+        pegRedOne.setX(rowThree[pegIndexes[4]].x);
+        pegRedOne.setY(rowThree[pegIndexes[4]].y);
+        pegRedTwo.setX(rowThree[pegIndexes[5]].x);
+        pegRedTwo.setY(rowThree[pegIndexes[5]].y);
+
+        normalizePegs(4, 5, pegRedOne, pegRedTwo);
+        normalizePegs(0, 1, pegBlueOne, pegBlueTwo);
+        normalizePegs(2, 3, pegYellowOne, pegYellowTwo);
+
+        pegBlueLayer.draw();
+        pegYellowLayer.draw();
+        pegRedLayer.draw();
+    }
+}
+
+/**
+* Creates pegs using loaded image assets. Draws the Kinetic Circle objects to the Kinetic Layers.
+*  
+* @param images array
+* 
+*/
 function drawPegs(images) {
     pegBlueOne = drawPeg(pegOneColor, 'pegBlueOne', images.bluePegImage);
     pegBlueLayer.add(pegBlueOne);
