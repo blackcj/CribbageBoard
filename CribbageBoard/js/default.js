@@ -12,7 +12,7 @@
     app.addEventListener('activated', function(evt) {
         var appState = activation.ApplicationExecutionState;
         if (evt.detail.kind === activation.ActivationKind.launch) {
-            if (args.detail.previousExecutionState !== activation.ApplicationExecutionState.terminated) {
+            if (evt.detail.previousExecutionState !== activation.ApplicationExecutionState.terminated) {
                 // This application has been newly launched. 
                 // Initialize your application here.
                 pegIndexes = [0, 1, 0, 1, 0, 1];
