@@ -1,7 +1,6 @@
 Cribbage Board
 ==============
-
-Windows 8 JavaScript Application
+Windows 8 HTML / JavaScript Application. This app replaces a physical board for playing Cribbage.
 
 APPLICATION AUTHOR
 ---------------------------
