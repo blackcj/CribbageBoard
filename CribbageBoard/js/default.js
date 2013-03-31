@@ -2,69 +2,44 @@
 // http://go.microsoft.com/fwlink/?LinkId=232508
 (function () {
     "use strict";
-
-
     
     WinJS.Binding.optimizeBindingReferences = true;
 
     var app = WinJS.Application;
     var activation = Windows.ApplicationModel.Activation;
     var display = Windows.Graphics.Display;
+
     app.addEventListener('activated', function(evt) {
         var appState = activation.ApplicationExecutionState;
-        //console.log(evt.detail.previousExecutionState);
-        if(evt.detail.previousExecutionState == appState.notRunning || evt.detail.previousExecutionState == appState.closedByUser) {
-            pegIndexes = [0,1,0,1,0,1];
+        if (evt.detail.kind === activation.ActivationKind.launch) {
+            if (args.detail.previousExecutionState !== activation.ApplicationExecutionState.terminated) {
+                // This application has been newly launched. 
+                // Initialize your application here.
+                pegIndexes = [0, 1, 0, 1, 0, 1];
+            } else {
+                // This application has been reactivated from suspension.
+                // Restore application state here.
+                pegIndexes = app.sessionState.pegIndexes;
+            }
+            evt.setPromise(WinJS.UI.processAll());
         }
-        if(evt.detail.previousExecutionState == appState.terminated) {
-            pegIndexes = app.sessionState.pegIndexes;
-        }
+  
         if (isLoaded) {
             init();
         } else {
             isReady = true;
         }
+
+        display.DisplayProperties.autoRotationPreferences = display.DisplayOrientations.landscape | display.DisplayOrientations.landscapeFlipped;
         
     });
 
-    app.addEventListener('suspended', function () {
-        //console.log('SUSPENDED');
-    });
-
-
+    // Store user data when app goes into background.
     app.addEventListener('checkpoint', function () {
         //console.log('CHECKPOINT');
         app.sessionState.pegIndexes = pegIndexes;
-        
     });
-
-
-    app.onactivated = function (args) {
-        if (args.detail.kind === activation.ActivationKind.launch) {
-            if (args.detail.previousExecutionState !== activation.ApplicationExecutionState.terminated) {
-                // TODO: This application has been newly launched. Initialize
-                // your application here.
-            } else {
-                // TODO: This application has been reactivated from suspension.
-                // Restore application state here.
-            }
-            args.setPromise(WinJS.UI.processAll());
-        }
-       
-        display.DisplayProperties.autoRotationPreferences = display.DisplayOrientations.landscape | display.DisplayOrientations.landscapeFlipped;
-
-    };
-
-    app.oncheckpoint = function (args) {
-        // TODO: This application is about to be suspended. Save any state
-        // that needs to persist across suspensions here. You might use the
-        // WinJS.Application.sessionState object, which is automatically
-        // saved and restored across suspension. If you need to complete an
-        // asynchronous operation before your application is suspended, call
-        // args.setPromise().
-    };
 
     app.start();
 
-    
 })();
