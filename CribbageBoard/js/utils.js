@@ -245,6 +245,10 @@ function getAngle(adj, opp)
 var xPos = 124;
 var yPos = 153;
 
+/**
+* Build arrays of points to use for snaping the pegs into position.
+*
+*/
 function buildArrays() {
 
     rowOne.push(new Point(59, 153));
@@ -341,6 +345,11 @@ function buildArrays() {
 
     rowThree.push(new Point(970.5, 561.5));
 }
+
+/**
+* Used for debugging. Displays a dot at each one of the points in the row arrays.
+*
+*/
 var dotColor = '#666666';
 function showDots() {
     
@@ -589,12 +598,12 @@ function onPegMove(pos) {
 }
 
 /**
-    * Adjusts hit area for pegs when they are right next to each other.
-    *  
-    * @param peg1
-    * @param peg2
-    * 
-    */ 
+* Adjusts hit area for pegs when they are right next to each other.
+*  
+* @param peg1
+* @param peg2
+* 
+*/ 
 function normalizePegs(p1, p2, peg1, peg2)
 {
     if (p1 == 0) {
